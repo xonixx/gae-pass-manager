@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
-    <!-- Only allow HTTPS -->
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>everything</web-resource-name>
             <url-pattern>/*</url-pattern>
         </web-resource-collection>
+        <auth-constraint>
+            <!-- Only App owner can access the app -->
+            <role-name>admin</role-name>
+        </auth-constraint>
         <user-data-constraint>
+            <!-- Only allow HTTPS -->
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>
         </user-data-constraint>
     </security-constraint>
