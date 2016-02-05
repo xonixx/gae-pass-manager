@@ -1,3 +1,11 @@
-<input type="text" ng-model="searchStr"/>
+<h3>Passwords</h3>
 
-<div ng-repeat="p in passwords">{{p.tags}} {{p.url}}</div>
+<div class="row">
+    <div class="col-xs-12">
+        <input type="text"
+               id="search-box"
+               ng-model="searchStr"/>
+    </div>
+</div>
+<div ng-repeat="p in passwords">
+</div>
