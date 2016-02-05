@@ -5,6 +5,15 @@ angular.module('pass-manager', ['ngRoute'])
             .when('/add', {templateUrl: 'add.jsp', controller: 'AddCtrl'})
             .otherwise({redirectTo: '/list'});
     }])
+    .directive('pass', [function () {
+        return function (scope, elem, attrs) {
+            elem.on('focus', function () {
+                elem.attr('type', 'text')
+            }).on('blur', function () {
+                elem.attr('type', 'password')
+            });
+        }
+    }])
     .controller('ListCtrl', ['$scope', function ListCtrl($scope) {
         $scope.passwords = [
             {tags:['tag1', 'tag2'], descr: 'Some long detailed description 123', url:'https://google.com', pass: "password1"},

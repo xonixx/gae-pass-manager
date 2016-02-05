@@ -13,7 +13,7 @@
             <span ng-repeat="t in p.tags" class="tag">{{t}}</span>
         </div>
         <div class="col-xs-2">
-            <input type="password" ng-model="p.pass" style="width: 100%; margin-top: 8px">
+            <input type="password" pass="" ng-model="p.pass" style="width: 100%; margin-top: 8px">
         </div>
     </div>
 </div>
