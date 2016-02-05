@@ -2,3 +2,21 @@
 #search-box {
     width: 100%;
 }
+
+.pass-block {
+    padding: 10px 0;
+    background: #eee;
+    margin-top: 10px;
+}
+.pass-block.row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.pass-block .tag {
+    background-color: #ffb;
+    font-weight: bold;
+    margin-right: 5px;
+    padding: 3px;
+    border: solid 1px #bbb;
+}
