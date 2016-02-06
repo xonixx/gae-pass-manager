@@ -1,5 +1,5 @@
 <div class="container">
-    <h3 class="text-center">Add/Edit</h3>
+    <h3 class="text-center">{{isEdit ? 'Edit' : 'Add'}}</h3>
     <form class="form-horizontal">
         <div class="form-group">
             <label for="inputUrl" class="col-sm-2 control-label">URL</label>
@@ -34,7 +34,7 @@
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
                 <button type="button" class="btn btn-success">Save</button>
-                <button type="button" class="btn btn-default">Cancel</button>
+                <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
             </div>
         </div>
     </form>
