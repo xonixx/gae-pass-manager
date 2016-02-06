@@ -1,6 +1,10 @@
 <div class="container">
     <h3 class="text-center">{{isEdit ? 'Edit' : 'Add'}}</h3>
-    <form class="form-horizontal">
+    <form class="form-horizontal" autocomplete="off">
+        <div style="height: 0;width: 0;overflow: hidden"><%-- hack against chrome autocomplete --%>
+            <input style="" type="text" name="fakeusername"/>
+            <input style="" type="password" name="fakepassword"/>
+        </div>
         <div class="form-group">
             <label for="inputUrl" class="col-sm-2 control-label">URL</label>
             <div class="col-sm-10">
