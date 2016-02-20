@@ -1,4 +1,4 @@
-angular.module('pass-manager', ['ngRoute'])
+angular.module('pass-manager', ['ngRoute', 'ngTagsInput'])
     .config(['$routeProvider', function ($routeProvider) {
         $routeProvider
             .when('/list', {templateUrl: 'list.jsp', controller: 'ListCtrl'})
@@ -80,11 +80,23 @@ angular.module('pass-manager', ['ngRoute'])
         function AddCtrl($scope, $routeParams, PasswordsFunctions) {
             var uid = $routeParams.uid;
             $scope.isEdit = !!uid;
-            $scope.password = uid ? PasswordsFunctions.getByUid(uid) : {uid:newUid()};
+            var p = $scope.password = uid ? PasswordsFunctions.getByUid(uid) : {uid:newUid()};
+
+            $scope.tags = [];
+            if (p.tags) {
+                for (var i = 0; i < p.tags.length; i++) {
+                    $scope.tags.push({text:p.tags[i]})
+                }
+            }
+
             $scope.cancel = function () {
                 location.href = '#/list';
             };
             $scope.save = function (password) {
+                password.tags = [];
+                for (var i = 0; i < $scope.tags.length; i++) {
+                    password.tags.push($scope.tags[i].text);
+                }
                 PasswordsFunctions.addOrUpdate(password);
                 $scope.cancel();// TODO: error reporting
             }
