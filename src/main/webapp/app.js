@@ -19,7 +19,7 @@ angular.module('pass-manager', ['ngRoute', 'ngTagsInput'])
         // TODO: date created/updated
         var initial = [
             {
-                uid: newUid(),
+                uid: '1',
                 tags: ['tag1', 'tag2'],
                 descr: 'Some long detailed description 123',
                 url: 'https://google.com',
@@ -27,7 +27,7 @@ angular.module('pass-manager', ['ngRoute', 'ngTagsInput'])
                 pass: "password1"
             },
             {
-                uid: newUid(),
+                uid: '2',
                 tags: ['tag1', 'tag2', 'tag3'],
                 descr: 'Some other long description 123',
                 url: 'https://google.com',
@@ -35,7 +35,7 @@ angular.module('pass-manager', ['ngRoute', 'ngTagsInput'])
                 pass: "password1"
             },
             {
-                uid: newUid(),
+                uid: '3',
                 tags: ['tag3'],
                 descr: 'dolor sit amet',
                 url: 'https://apple.com',
@@ -63,6 +63,25 @@ angular.module('pass-manager', ['ngRoute', 'ngTagsInput'])
                         return p;
                 }
                 return null;
+            },
+            listTags: function (filter) {
+                var th = {};
+                for (var i = 0; i < this.passwords.length; i++) {
+                    var p = this.passwords[i];
+                    if (!p.tags)
+                        continue;
+                    for (var j = 0; j < p.tags.length; j++) {
+                        var tag = p.tags[j];
+                        if (!filter || tag.toLowerCase().indexOf(filter.toLowerCase()) >= 0)
+                            th[tag] = 1;
+                    }
+                }
+                var tags = [];
+                for (var k in th) {
+                    tags.push(k);
+                }
+                tags.sort();
+                return tags;
             }
         }
     }])
@@ -80,14 +99,9 @@ angular.module('pass-manager', ['ngRoute', 'ngTagsInput'])
         function AddCtrl($scope, $routeParams, PasswordsFunctions) {
             var uid = $routeParams.uid;
             $scope.isEdit = !!uid;
-            var p = $scope.password = uid ? PasswordsFunctions.getByUid(uid) : {uid:newUid()};
+            var p = $scope.password = uid ? angular.copy(PasswordsFunctions.getByUid(uid)) : {uid: newUid()};
 
-            $scope.tags = [];
-            if (p.tags) {
-                for (var i = 0; i < p.tags.length; i++) {
-                    $scope.tags.push({text:p.tags[i]})
-                }
-            }
+            $scope.tags = tagsToObjArr(p.tags);
 
             $scope.cancel = function () {
                 location.href = '#/list';
@@ -99,9 +113,21 @@ angular.module('pass-manager', ['ngRoute', 'ngTagsInput'])
                 }
                 PasswordsFunctions.addOrUpdate(password);
                 $scope.cancel();// TODO: error reporting
+            };
+            $scope.loadTags = function (q) {
+                return tagsToObjArr(PasswordsFunctions.listTags(q));
             }
         }]);
 
 function newUid() {
     return '' + new Date().getTime() + '-' + Math.floor(Math.random() * 1e10);
+}
+function tagsToObjArr(tags) {
+    var res = [];
+    if (tags) {
+        for (var i = 0; i < tags.length; i++) {
+            res.push({text: tags[i]})
+        }
+    }
+    return res;
 }

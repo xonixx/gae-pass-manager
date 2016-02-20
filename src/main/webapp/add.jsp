@@ -32,10 +32,11 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="inputTags" class="col-sm-2 control-label">Tags</label>
+            <label class="col-sm-2 control-label">Tags</label>
             <div class="col-sm-10">
-                <%--<input ng-model="password.tags" type="text" class="form-control" id="inputTags" placeholder="Tags">--%>
-                <tags-input ng-model="tags"></tags-input>
+                <tags-input ng-model="tags">
+                    <auto-complete source="loadTags($query)" min-length="1"></auto-complete>
+                </tags-input>
             </div>
         </div>
         <div class="form-group">
