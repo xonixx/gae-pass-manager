@@ -39,7 +39,7 @@
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
-                <button type="button" class="btn btn-success">Save</button>
+                <button type="button" class="btn btn-success" ng-click="save(password)">Save</button>
                 <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
             </div>
         </div>

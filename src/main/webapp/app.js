@@ -16,6 +16,7 @@ angular.module('pass-manager', ['ngRoute'])
         }
     }])
     .factory('PasswordsFunctions', [function () {
+        // TODO: date created/updated
         var initial = [
             {
                 uid: newUid(),
@@ -47,8 +48,13 @@ angular.module('pass-manager', ['ngRoute'])
             getCurrentList: function () {
                 return this.passwords;
             },
-            add: function (password) {
-                this.passwords.push(password);
+            addOrUpdate: function (password) {
+                var existing = this.getByUid(password.uid);
+                if (existing) {
+                    angular.extend(existing, password);
+                } else {
+                    this.passwords.push(password);
+                }
             },
             getByUid: function (uid) {
                 for (var i = 0; i < this.passwords.length; i++) {
@@ -66,17 +72,21 @@ angular.module('pass-manager', ['ngRoute'])
         $scope.addNew = function () {
             location.href = '#/add';
         };
-        $scope.edit = function (p) {
-            location.href = '#/edit/' + p.uid;
+        $scope.edit = function (password) {
+            location.href = '#/edit/' + password.uid;
         };
     }])
     .controller('AddCtrl', ['$scope', '$routeParams', 'PasswordsFunctions',
         function AddCtrl($scope, $routeParams, PasswordsFunctions) {
             var uid = $routeParams.uid;
             $scope.isEdit = !!uid;
-            $scope.password = uid ? PasswordsFunctions.getByUid(uid) : {};
+            $scope.password = uid ? PasswordsFunctions.getByUid(uid) : {uid:newUid()};
             $scope.cancel = function () {
                 location.href = '#/list';
+            };
+            $scope.save = function (password) {
+                PasswordsFunctions.addOrUpdate(password);
+                $scope.cancel();// TODO: error reporting
             }
         }]);
 
