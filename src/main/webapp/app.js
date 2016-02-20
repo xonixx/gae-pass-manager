@@ -3,7 +3,7 @@ angular.module('pass-manager', ['ngRoute', 'ngTagsInput'])
         $routeProvider
             .when('/list', {templateUrl: 'list.jsp', controller: 'ListCtrl'})
             .when('/add', {templateUrl: 'add.jsp', controller: 'AddCtrl'})
-            .when('/edit/:uid', {templateUrl: 'add.jsp', controller: 'AddCtrl', edit: 1})
+            .when('/edit/:uid', {templateUrl: 'add.jsp', controller: 'AddCtrl'})
             .otherwise({redirectTo: '/list'});
     }])
     .directive('pass', [function () {
@@ -56,6 +56,11 @@ angular.module('pass-manager', ['ngRoute', 'ngTagsInput'])
                     this.passwords.push(password);
                 }
             },
+            remove: function (password) {
+                var p = this.getByUid(password.uid);
+                var idx = this.passwords.indexOf(p);
+                this.passwords.splice(idx, 1);
+            },
             getByUid: function (uid) {
                 for (var i = 0; i < this.passwords.length; i++) {
                     var p = this.passwords[i];
@@ -94,6 +99,13 @@ angular.module('pass-manager', ['ngRoute', 'ngTagsInput'])
         $scope.edit = function (password) {
             location.href = '#/edit/' + password.uid;
         };
+        $scope.delete = function (password) {
+            var l = '--------------------------------------------\n';
+            if (confirm(l + 'Are you sure you want to remove password for ' + (password.url || password.login) + '?\n' + l)
+                && confirm(l + '???   ARE YOU REALLY SURE   ???\n' + l)) {
+                PasswordsFunctions.remove(password);
+            }
+        }
     }])
     .controller('AddCtrl', ['$scope', '$routeParams', 'PasswordsFunctions',
         function AddCtrl($scope, $routeParams, PasswordsFunctions) {
