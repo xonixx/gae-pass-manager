@@ -1,10 +1,11 @@
 angular.module('pass-manager', ['ngRoute', 'ngTagsInput'])
     .config(['$routeProvider', function ($routeProvider) {
         $routeProvider
+            .when('/login', {templateUrl: 'login.jsp', controller: 'LoginCtrl'})
             .when('/list', {templateUrl: 'list.jsp', controller: 'ListCtrl'})
             .when('/add', {templateUrl: 'add.jsp', controller: 'AddCtrl'})
             .when('/edit/:uid', {templateUrl: 'add.jsp', controller: 'AddCtrl'})
-            .otherwise({redirectTo: '/list'});
+            .otherwise({redirectTo: '/login'});
     }])
     .directive('pass', [function () {
         return function (scope, elem, attrs) {
@@ -89,6 +90,9 @@ angular.module('pass-manager', ['ngRoute', 'ngTagsInput'])
                 return tags;
             }
         }
+    }])
+    .controller('LoginCtrl', ['$scope', function ($scope) {
+        $scope.isNew = 1;
     }])
     .controller('ListCtrl', ['$scope', 'PasswordsFunctions', function ListCtrl($scope, PasswordsFunctions) {
         $scope.passwords = PasswordsFunctions.getCurrentList();

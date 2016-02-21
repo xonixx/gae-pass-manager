@@ -3,10 +3,14 @@
     <h3>Passwords
         <button type="button" ng-click="addNew()"
                 class="btn btn-info btn-sm"
-                style="margin-left: 150px;margin-top: -10px">Add New</button>
+                style="margin-left: 150px;margin-top: -10px">Add New
+        </button>
     </h3>
     <div id="info-block">
-        <div id="current-user"><%= Logic.getCurrentUser().getEmail() %></div>
+        <div id="current-user">
+            <%= Logic.getCurrentUser().getEmail() %>
+            <a href="<%= Logic.getLogoutUrl() %>">(Logout)</a>
+        </div>
         <div id="pass-count">Total passwords: {{passwords.length}}</div>
     </div>
     <div class="row">

@@ -14,4 +14,9 @@ public class Logic {
         UserService userService = UserServiceFactory.getUserService();
         return userService.getCurrentUser();
     }
+
+    public static String getLogoutUrl() {
+        UserService userService = UserServiceFactory.getUserService();
+        return userService.createLogoutURL("/");
+    }
 }
