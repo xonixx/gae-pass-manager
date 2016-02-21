@@ -157,3 +157,16 @@ function tagsToObjArr(tags) {
     }
     return res;
 }
+
+function encrypt(password, text) {
+    // aes-256
+    return sjcl.encrypt(password, text, {ks: 256})
+}
+
+function decrypt(password, encryptedText) {
+    try {
+        return sjcl.decrypt(password, encryptedText);
+    } catch (e) {
+        return null;
+    }
+}
