@@ -93,6 +93,16 @@ angular.module('pass-manager', ['ngRoute', 'ngTagsInput'])
     }])
     .controller('LoginCtrl', ['$scope', function ($scope) {
         $scope.isNew = 1;
+
+        $scope.login = function (pass) {
+
+        };
+        $scope.register = function (pass, passConfirm) {
+            $scope.error = null;
+            if (pass != passConfirm) {
+                $scope.error = 'Password and Confirm Password are not same!'
+            }
+        }
     }])
     .controller('ListCtrl', ['$scope', 'PasswordsFunctions', function ListCtrl($scope, PasswordsFunctions) {
         $scope.passwords = PasswordsFunctions.getCurrentList();
