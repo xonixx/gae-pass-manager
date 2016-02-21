@@ -1,9 +1,14 @@
+<%@ page import="info.xonix.passmanager.Logic" %>
 <div class="container-fluid">
     <h3>Passwords
         <button type="button" ng-click="addNew()"
                 class="btn btn-info btn-sm"
                 style="margin-left: 150px;margin-top: -10px">Add New</button>
     </h3>
+    <div id="info-block">
+        <div id="current-user"><%= Logic.getCurrentUser().getEmail() %></div>
+        <div id="pass-count">Total passwords: {{passwords.length}}</div>
+    </div>
     <div class="row">
         <div class="col-xs-12">
             <input type="text" id="search-box" ng-model="searchStr" placeholder="Filter..."/>
