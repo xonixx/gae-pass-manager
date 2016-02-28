@@ -1,9 +1,6 @@
 package info.xonix.passmanager.servlets;
 
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.EntityNotFoundException;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.*;
 import info.xonix.passmanager.Logic;
 
 import javax.servlet.ServletException;
@@ -40,7 +37,7 @@ public class ApiServlet extends HttpServlet {
         resp.setContentType("application/json");
         if ("load".equals(action)) {
             Map<String, String> res = new LinkedHashMap<>();
-            String value = data != null ? (String) data.getProperty("value") : null;
+            String value = data != null ? ((Text) data.getProperty("value")).getValue() : null;
 
             log.info("Found data: " + value);
 
@@ -61,8 +58,8 @@ public class ApiServlet extends HttpServlet {
 
         if ("save".equals(action)) {
             Entity data = new Entity("Data", "1");
-            Object val = json.get("data");
-            data.setProperty("value", val);
+            String val = (String) json.get("data");
+            data.setProperty("value", new Text(val));
 
             log.info("Storing data: " + val);
 

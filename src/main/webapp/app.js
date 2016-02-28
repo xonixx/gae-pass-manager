@@ -128,7 +128,9 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 $scope.error = 'Password and Confirm Password are not same!'
             } else {
                 PasswordsFunctions.setMasterPassword(pass);
-                PasswordsFunctions.store();
+                PasswordsFunctions.store().$promise.then(function () {
+                    location.href = '#/list';
+                });
             }
         }
     }])
