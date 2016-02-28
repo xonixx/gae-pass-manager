@@ -1,4 +1,4 @@
-angular.module('pass-manager', ['ngRoute', 'ngTagsInput'])
+angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
     .config(['$routeProvider', function ($routeProvider) {
         $routeProvider
             .when('/login', {templateUrl: 'login.jsp', controller: 'LoginCtrl'})
@@ -16,9 +16,15 @@ angular.module('pass-manager', ['ngRoute', 'ngTagsInput'])
             });
         }
     }])
-    .factory('PasswordsFunctions', [function () {
+    .factory('Api', ['$resource', function ($resource) {
+        return $resource('api?action=:action', {}, {
+            loadData: {method: 'GET', params: {action: 'load'}},
+            saveData: {method: 'POST', params: {action: 'save'}}
+        });
+    }])
+    .factory('PasswordsFunctions', ['Api', function (Api) {
         // TODO: date created/updated
-        var initial = [
+        /*var initial = [
             {
                 uid: '1',
                 tags: ['tag1', 'tag2'],
@@ -43,9 +49,18 @@ angular.module('pass-manager', ['ngRoute', 'ngTagsInput'])
                 login: 'login2',
                 pass: "password2"
             }
-        ];
+        ];*/
+
+        var initial = [];
         return {
             passwords: initial,
+            data: null,
+            loadData: function () {
+                return this.data = Api.loadData();
+            },
+            isNew: function () {
+                return !!this.data.data;
+            },
             getCurrentList: function () {
                 return this.passwords;
             },
@@ -91,8 +106,10 @@ angular.module('pass-manager', ['ngRoute', 'ngTagsInput'])
             }
         }
     }])
-    .controller('LoginCtrl', ['$scope', function ($scope) {
-        $scope.isNew = 1;
+    .controller('LoginCtrl', ['$scope', 'PasswordsFunctions', function ($scope, PasswordsFunctions) {
+        PasswordsFunctions.loadData().$promise.then(function () {
+            $scope.isNew = PasswordsFunctions.isNew();
+        });
 
         $scope.login = function (pass) {
 

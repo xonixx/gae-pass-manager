@@ -4,6 +4,7 @@
 <head>
     <script src="lib/angular-1.4.9/angular.js"></script>
     <script src="lib/angular-1.4.9/angular-route.js"></script>
+    <script src="lib/angular-1.4.9/angular-resource.js"></script>
     <script src="lib/ng-tags-input/ng-tags-input.js"></script>
     <script src="lib/sjcl/sjcl.js"></script>
     <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css"/>
