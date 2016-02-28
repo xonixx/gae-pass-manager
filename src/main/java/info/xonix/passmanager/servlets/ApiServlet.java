@@ -60,8 +60,7 @@ public class ApiServlet extends HttpServlet {
         resp.setContentType("application/json");
 
         if ("save".equals(action)) {
-            Key key = KeyFactory.createKey("Data", "1");
-            Entity data = new Entity("Data", key);
+            Entity data = new Entity("Data", "1");
             Object val = json.get("data");
             data.setProperty("value", val);
 
