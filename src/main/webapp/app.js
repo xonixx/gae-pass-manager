@@ -51,15 +51,29 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             }
         ];*/
 
-        var initial = [];
-        return {
-            passwords: initial,
-            data: null,
+        var pf;
+        return pf = {
+            data: {},
+            dataEncrypted: null,
+            masterPassword: null,
             loadData: function () {
-                return this.data = Api.loadData();
+                return Api.loadData(function (res) {
+                    pf.dataEncrypted = res.data;
+                });
             },
             isNew: function () {
-                return !!this.data.data;
+                return !this.dataEncrypted;
+            },
+            setMasterPassword: function (pass) {
+                // TODO check if we change pw!!!
+                this.masterPassword = pass;
+            },
+            encrypt: function () {
+                this.dataEncrypted = encrypt(this.masterPassword, angular.toJson(this.data));
+            },
+            store: function () {
+                this.encrypt();
+                return Api.saveData({data: this.dataEncrypted});
             },
             getCurrentList: function () {
                 return this.passwords;
@@ -118,6 +132,9 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             $scope.error = null;
             if (pass != passConfirm) {
                 $scope.error = 'Password and Confirm Password are not same!'
+            } else {
+                PasswordsFunctions.setMasterPassword(pass);
+                PasswordsFunctions.store();
             }
         }
     }])

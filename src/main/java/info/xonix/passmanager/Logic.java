@@ -1,8 +1,11 @@
 package info.xonix.passmanager;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.gson.Gson;
 
 /**
  * User: xonix
@@ -10,13 +13,22 @@ import com.google.appengine.api.users.UserServiceFactory;
  * Time: 19:47
  */
 public class Logic {
+    public static final Gson gson = new Gson();
+
+    // TODO: do we need to cache?
+    public static UserService getUserService() {
+        return UserServiceFactory.getUserService();
+    }
+
+    public static DatastoreService getDatastoreService() {
+        return DatastoreServiceFactory.getDatastoreService();
+    }
+
     public static User getCurrentUser() {
-        UserService userService = UserServiceFactory.getUserService();
-        return userService.getCurrentUser();
+        return getUserService().getCurrentUser();
     }
 
     public static String getLogoutUrl() {
-        UserService userService = UserServiceFactory.getUserService();
-        return userService.createLogoutURL("/");
+        return getUserService().createLogoutURL("/");
     }
 }
