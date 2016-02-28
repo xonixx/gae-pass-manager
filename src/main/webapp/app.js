@@ -24,33 +24,6 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
     }])
     .factory('PasswordsFunctions', ['Api', function (Api) {
         // TODO: date created/updated
-        /*var initial = [
-            {
-                uid: '1',
-                tags: ['tag1', 'tag2'],
-                descr: 'Some long detailed description 123',
-                url: 'https://google.com',
-                login: 'aaa@bbb.ccc',
-                pass: "password1"
-            },
-            {
-                uid: '2',
-                tags: ['tag1', 'tag2', 'tag3'],
-                descr: 'Some other long description 123',
-                url: 'https://google.com',
-                login: 'login',
-                pass: "password1"
-            },
-            {
-                uid: '3',
-                tags: ['tag3'],
-                descr: 'dolor sit amet',
-                url: 'https://apple.com',
-                login: 'login2',
-                pass: "password2"
-            }
-        ];*/
-
         var pf;
         return pf = {
             data: {},
@@ -71,29 +44,45 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             encrypt: function () {
                 this.dataEncrypted = encrypt(this.masterPassword, angular.toJson(this.data));
             },
+            decrypt: function (pass) {
+                var decrText = decrypt(pass, this.dataEncrypted);
+
+                if (decrText === null)
+                    return false;
+
+                this.data = angular.fromJson(decrText);
+                if (!this.data.passwords)
+                    this.data.passwords = [];
+                this.setMasterPassword(pass);
+                return true;
+            },
             store: function () {
                 this.encrypt();
                 return Api.saveData({data: this.dataEncrypted});
             },
-            getCurrentList: function () {
-                return this.passwords;
+            getPasswords: function () {
+                return this.data.passwords;
             },
             addOrUpdate: function (password) {
                 var existing = this.getByUid(password.uid);
                 if (existing) {
                     angular.extend(existing, password);
                 } else {
-                    this.passwords.push(password);
+                    this.getPasswords().push(password);
                 }
+                this.store();
             },
             remove: function (password) {
                 var p = this.getByUid(password.uid);
-                var idx = this.passwords.indexOf(p);
-                this.passwords.splice(idx, 1);
+                var pp = this.getPasswords();
+                var idx = pp.indexOf(p);
+                pp.splice(idx, 1);
+                this.store();
             },
             getByUid: function (uid) {
-                for (var i = 0; i < this.passwords.length; i++) {
-                    var p = this.passwords[i];
+                var pp = this.getPasswords();
+                for (var i = 0; i < pp.length; i++) {
+                    var p = pp[i];
                     if (p.uid == uid)
                         return p;
                 }
@@ -101,8 +90,9 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             },
             listTags: function (filter) {
                 var th = {};
-                for (var i = 0; i < this.passwords.length; i++) {
-                    var p = this.passwords[i];
+                var pp = this.getPasswords();
+                for (var i = 0; i < pp.length; i++) {
+                    var p = pp[i];
                     if (!p.tags)
                         continue;
                     for (var j = 0; j < p.tags.length; j++) {
@@ -126,7 +116,11 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
         });
 
         $scope.login = function (pass) {
-
+            if (!PasswordsFunctions.decrypt(pass)) {
+                $scope.errorDanger = 'Wrond password! Please try again.'
+            } else {
+                location.href = '#/list';
+            }
         };
         $scope.register = function (pass, passConfirm) {
             $scope.error = null;
@@ -139,7 +133,12 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
         }
     }])
     .controller('ListCtrl', ['$scope', 'PasswordsFunctions', function ListCtrl($scope, PasswordsFunctions) {
-        $scope.passwords = PasswordsFunctions.getCurrentList();
+        if (PasswordsFunctions.isNew()) {
+            location.href = '#/login';
+            return;
+        }
+
+        $scope.passwords = PasswordsFunctions.getPasswords();
 
         $scope.addNew = function () {
             location.href = '#/add';
@@ -157,6 +156,11 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
     }])
     .controller('AddCtrl', ['$scope', '$routeParams', 'PasswordsFunctions',
         function AddCtrl($scope, $routeParams, PasswordsFunctions) {
+            if (PasswordsFunctions.isNew()) {
+                location.href = '#/login';
+                return;
+            }
+
             var uid = $routeParams.uid;
             $scope.isEdit = !!uid;
             var p = $scope.password = uid ? angular.copy(PasswordsFunctions.getByUid(uid)) : {uid: newUid()};

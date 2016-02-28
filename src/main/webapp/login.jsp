@@ -8,6 +8,9 @@
         <div class="alert alert-warning" ng-if="error">
             {{error}}
         </div>
+        <div class="alert alert-danger" ng-if="errorDanger">
+            {{errorDanger}}
+        </div>
         <div class="form-group">
             <label for="inputPass" class="col-sm-2 control-label">Password</label>
             <div class="col-sm-10">
