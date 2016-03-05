@@ -9,7 +9,7 @@
     <div id="info-block">
         <div id="current-user">
             <%= Logic.getCurrentUser().getEmail() %>
-            <a href="<%= Logic.getLogoutUrl() %>">(Logout)</a>
+            <a href="#/logout">(Logout)</a>
         </div>
         <div id="pass-count">Total passwords: {{passwords.length}}. Last updated: {{lastUpdated | date:'d MMM yyyy HH:mm'}}</div>
     </div>
