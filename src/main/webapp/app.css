@@ -21,6 +21,10 @@
     border: solid 1px #bbb;
 }
 
+.pass-block button[disabled="disabled"] {
+    opacity: .4;
+}
+
 #info-block {
     position: absolute;
     top:10px;

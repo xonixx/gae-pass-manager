@@ -37,6 +37,7 @@
             <button ng-disabled="!p.pass" type="button" class="btn btn-xs btn-primary"
                     copy-to-clipboard=""
                     data-clipboard-text="{{p.pass}}">Copy password</button>
+            <span></span>
             <button ng-disabled="!p.secureData" type="button" class="btn btn-xs btn-primary"
                     copy-to-clipboard=""
                     data-clipboard-text="{{p.secureData}}">Copy secure data</button>
