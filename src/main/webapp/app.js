@@ -22,7 +22,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             saveData: {method: 'POST', params: {action: 'save'}}
         });
     }])
-    .factory('PasswordsFunctions', ['Api', '$rootScope', function (Api, $rootScope) {
+    .factory('Logic', ['Api', '$rootScope', function (Api, $rootScope) {
         // TODO: date created/updated
         var pf;
         return pf = {
@@ -113,13 +113,13 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             }
         }
     }])
-    .controller('LoginCtrl', ['$scope', 'PasswordsFunctions', function ($scope, PasswordsFunctions) {
-        PasswordsFunctions.loadData().$promise.then(function () {
-            $scope.isNew = PasswordsFunctions.isNew();
+    .controller('LoginCtrl', ['$scope', 'Logic', function ($scope, Logic) {
+        Logic.loadData().$promise.then(function () {
+            $scope.isNew = Logic.isNew();
         });
 
         $scope.login = function (pass) {
-            if (!PasswordsFunctions.decrypt(pass)) {
+            if (!Logic.decrypt(pass)) {
                 $scope.errorDanger = 'Wrond password! Please try again.'
             } else {
                 location.href = '#/list';
@@ -130,20 +130,20 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             if (pass != passConfirm) {
                 $scope.error = 'Password and Confirm Password are not same!'
             } else {
-                PasswordsFunctions.setMasterPassword(pass);
-                PasswordsFunctions.store().$promise.then(function () {
+                Logic.setMasterPassword(pass);
+                Logic.store().$promise.then(function () {
                     location.href = '#/list';
                 });
             }
         }
     }])
-    .controller('ListCtrl', ['$scope', 'PasswordsFunctions', function ListCtrl($scope, PasswordsFunctions) {
-        if (PasswordsFunctions.isNew()) {
+    .controller('ListCtrl', ['$scope', 'Logic', function ListCtrl($scope, Logic) {
+        if (Logic.isNew()) {
             location.href = '#/login';
             return;
         }
 
-        $scope.passwords = PasswordsFunctions.getPasswords();
+        $scope.passwords = Logic.getPasswords();
 
         $scope.addNew = function () {
             location.href = '#/add';
@@ -155,20 +155,20 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             var l = '--------------------------------------------\n';
             if (confirm(l + 'Are you sure you want to remove password for ' + (password.url || password.login) + '?\n' + l)
                 && confirm(l + '???   ARE YOU REALLY SURE   ???\n' + l)) {
-                PasswordsFunctions.remove(password);
+                Logic.remove(password);
             }
         }
     }])
-    .controller('AddCtrl', ['$scope', '$routeParams', 'PasswordsFunctions',
-        function AddCtrl($scope, $routeParams, PasswordsFunctions) {
-            if (PasswordsFunctions.isNew()) {
+    .controller('AddCtrl', ['$scope', '$routeParams', 'Logic',
+        function AddCtrl($scope, $routeParams, Logic) {
+            if (Logic.isNew()) {
                 location.href = '#/login';
                 return;
             }
 
             var uid = $routeParams.uid;
             $scope.isEdit = !!uid;
-            var p = $scope.password = uid ? angular.copy(PasswordsFunctions.getByUid(uid)) : {uid: newUid()};
+            var p = $scope.password = uid ? angular.copy(Logic.getByUid(uid)) : {uid: newUid()};
 
             $scope.tags = tagsToObjArr(p.tags);
 
@@ -180,11 +180,11 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 for (var i = 0; i < $scope.tags.length; i++) {
                     password.tags.push($scope.tags[i].text);
                 }
-                PasswordsFunctions.addOrUpdate(password);
+                Logic.addOrUpdate(password);
                 $scope.cancel();// TODO: error reporting
             };
             $scope.loadTags = function (q) {
-                return tagsToObjArr(PasswordsFunctions.listTags(q));
+                return tagsToObjArr(Logic.listTags(q));
             }
         }]);
 
