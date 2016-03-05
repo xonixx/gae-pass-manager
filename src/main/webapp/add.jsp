@@ -32,6 +32,13 @@
             </div>
         </div>
         <div class="form-group">
+            <label for="secureData" class="col-sm-2 control-label">Secure data</label>
+            <div class="col-sm-10">
+                <textarea ng-model="password.secureData" secure-data="" class="form-control" id="secureData"
+                          placeholder="Secure data"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
             <label class="col-sm-2 control-label">Tags</label>
             <div class="col-sm-10">
                 <tags-input ng-model="tags">

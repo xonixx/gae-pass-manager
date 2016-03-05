@@ -17,6 +17,23 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             });
         }
     }])
+    .directive('secureData', [function () {
+        function secure(elem) {
+            elem.toggleClass('secure-data-hide', !!elem.val())
+        }
+
+        return function (scope, elem, attrs) {
+            elem.addClass('secure-data-hide');
+            setTimeout(function () {
+                secure(elem)
+            }, 100);
+            elem.on('focus', function () {
+                elem.removeClass('secure-data-hide')
+            }).on('blur', function () {
+                secure(elem);
+            });
+        }
+    }])
     .directive('copyToClipboard', [function () {
         function showTooltip(elem, msg) {
             elem.attr('title', msg);

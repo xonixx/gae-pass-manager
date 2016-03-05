@@ -31,3 +31,8 @@
 #current-user {
     font-weight: bold;
 }
+
+.secure-data-hide {
+    background-color: #ddd;
+    color: #ddd;
+}
