@@ -53,12 +53,19 @@ public class ApiServlet extends HttpServlet {
         resp.setContentType("application/json");
 
         if (ACTION_LOAD.equals(action)) {
-            Map<String, String> res = new LinkedHashMap<>();
-            String value = data != null ? ((Text) data.getProperty(PROP_VALUE)).getValue() : null;
+            Map<String, Object> res = new LinkedHashMap<>();
 
-            log.info("Found data: " + value);
+            if (data != null) {
+                String value = ((Text) data.getProperty(PROP_VALUE)).getValue();
+                Date timestamp = (Date) data.getProperty(PROP_TIMESTAMP);
 
-            res.put("data", value);
+                log.info("Found data of size: " + value.length() + ", lastUpdated: " + timestamp);
+
+                res.put("data", value);
+                res.put("lastUpdated", timestamp);
+            } else {
+                log.info("No data saved yet...");
+            }
 
             resp.getWriter().print(Logic.gson.toJson(res));
             resp.getWriter().flush();
@@ -77,24 +84,25 @@ public class ApiServlet extends HttpServlet {
             Entity currentData = null;
             try {
                 currentData = Logic.getDatastoreService().get(KeyFactory.createKey(ENTITY_DATA, KEY_MASTER_DATA));
-            } catch (EntityNotFoundException e) {
-                log.info("Data not found");
+            } catch (EntityNotFoundException ignore) {
             }
 
-            int newBackupKey = -1; // no backup
+            long newBackupKey = -1;
             if (currentData != null) {
-                Integer lastBackupKey = (Integer) currentData.getProperty(PROP_LAST_BACKUP_KEY);
-                if (lastBackupKey != null) {
-                    newBackupKey = (lastBackupKey + 1) % BACKUPS_COUNT;
+                long lastBackupKey = -1; // no backup
+                Long currnetBackupKey = (Long) currentData.getProperty(PROP_LAST_BACKUP_KEY);
+                if (currnetBackupKey != null) {
+                    lastBackupKey = currnetBackupKey;
                 }
+                newBackupKey = (lastBackupKey + 1) % BACKUPS_COUNT;
 
                 log.info("Storing backup: #" + newBackupKey);
+
                 Entity backupData = new Entity(ENTITY_DATA_BACKUP, "" + newBackupKey);
                 backupData.setProperty(PROP_VALUE, currentData.getProperty(PROP_VALUE));
                 backupData.setProperty(PROP_TIMESTAMP, new Date());
-                backupData.setProperty(PROP_LAST_BACKUP_KEY, newBackupKey);
+                Logic.getDatastoreService().put(backupData);
             }
-
 
             Entity data = new Entity(ENTITY_DATA, KEY_MASTER_DATA);
             String val = (String) json.get("data");
@@ -102,7 +110,7 @@ public class ApiServlet extends HttpServlet {
             data.setProperty(PROP_TIMESTAMP, new Date());
             data.setProperty(PROP_LAST_BACKUP_KEY, newBackupKey);
 
-            log.info("Storing data: " + val);
+            log.info("Storing data of size: " + val.length());
 
             Logic.getDatastoreService().put(data);
 
