@@ -18,8 +18,29 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
         }
     }])
     .directive('copyToClipboard', [function () {
+        function showTooltip(elem, msg) {
+            elem.attr('title', msg);
+            elem.tooltip(msg ? 'show' : 'hide');
+        }
+
         return function (scope, elem, attrs) {
-            new Clipboard(elem[0]);
+            elem.attr('data-placement', 'bottom');
+            elem.attr('data-trigger', 'manual');
+
+            var cb = new Clipboard(elem[0]);
+
+            cb.on('success', function (e) {
+                e.clearSelection();
+                showTooltip(elem, 'Copied!');
+            });
+
+            cb.on('error', function (e) {
+                showTooltip(elem, 'Failed to copy :-(');
+            });
+
+            elem.on('mouseleave', function (e) {
+                showTooltip(elem, '')
+            })
         }
     }])
     .filter('date1', ['$filter', function ($filter) {

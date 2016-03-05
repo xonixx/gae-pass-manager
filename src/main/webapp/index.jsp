@@ -2,6 +2,8 @@
 <title>Personal password manager</title>
 
 <head>
+    <script src="lib/jquery/jquery-2.2.1.js"></script>
+    <script src="lib/bootstrap/js/bootstrap.js"></script>
     <script src="lib/angular-1.4.9/angular.js"></script>
     <script src="lib/angular-1.4.9/angular-route.js"></script>
     <script src="lib/angular-1.4.9/angular-resource.js"></script>
