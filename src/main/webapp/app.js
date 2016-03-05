@@ -25,28 +25,43 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
     }])
     .factory('Logic', ['Api', '$rootScope', function (Api, $rootScope) {
         // TODO: date created/updated
+        function persistMasterPass(pass) {
+            window.name = pass; // TODO: is this secure???
+        }
+
+        function getPersitedMasterPass() {
+            return window.name;
+        }
+
         var pf;
         return pf = {
-            data: {},
+            data: null,
             dataEncrypted: null,
             masterPassword: null,
-            reset: function() {
+            reset: function () {
                 this.setMasterPassword(null);
-                this.data = {};
+                this.data = null;
                 this.dataEncrypted = null;
             },
             loadData: function () {
                 return Api.loadData(function (res) {
                     pf.dataEncrypted = res.data;
+                    var mp = getPersitedMasterPass();
+                    if (mp)
+                        pf.decrypt(mp);
                     $rootScope.lastUpdated = res.lastUpdated;
                 });
             },
             isNew: function () {
                 return !this.dataEncrypted;
             },
+            isDecrypted: function () {
+                return this.data != null;
+            },
             setMasterPassword: function (pass) {
                 // TODO check if we change pw!!!
                 this.masterPassword = pass;
+                persistMasterPass(pass)
             },
             encrypt: function () {
                 this.dataEncrypted = encrypt(this.masterPassword, angular.toJson(this.data));
@@ -122,6 +137,9 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
     .controller('LoginCtrl', ['$scope', 'Logic', function ($scope, Logic) {
         Logic.loadData().$promise.then(function () {
             $scope.isNew = Logic.isNew();
+            if (Logic.isDecrypted()) {
+                location.href = '#/list';
+            }
         });
 
         $scope.login = function (pass) {
