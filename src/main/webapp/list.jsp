@@ -32,7 +32,10 @@
             </div>
         </div>
         <div class="col-xs-2">
-            <input readonly type="password" pass="" ng-model="p.pass" style="width: 100%; margin-top: 3px">
+            <%--<input readonly type="password" pass="" ng-model="p.pass" style="width: 100%; margin-top: 3px">--%>
+            <button ng-if="p.pass" type="button" class="btn btn-xs"
+                    copy-to-clipboard=""
+                    data-clipboard-text="{{p.pass}}">Copy password</button>
             <div ng-if="p.created">Created: {{p.created | date1}}</div>
             <div ng-if="p.updated">Updated: {{p.updated | date1}}</div>
         </div>

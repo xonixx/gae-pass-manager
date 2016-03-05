@@ -7,6 +7,7 @@
     <script src="lib/angular-1.4.9/angular-resource.js"></script>
     <script src="lib/ng-tags-input/ng-tags-input.js"></script>
     <script src="lib/sjcl/sjcl.js"></script>
+    <script src="lib/clipboardjs/clipboard.js"></script>
     <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css"/>
     <link rel="stylesheet" href="lib/bootstrap/css/bootstrap-theme.css"/>
     <link rel="stylesheet" href="lib/ng-tags-input/ng-tags-input.css"/>

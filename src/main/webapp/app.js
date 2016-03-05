@@ -17,6 +17,11 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             });
         }
     }])
+    .directive('copyToClipboard', [function () {
+        return function (scope, elem, attrs) {
+            new Clipboard(elem[0]);
+        }
+    }])
     .filter('date1', ['$filter', function ($filter) {
         var dateF = $filter('date');
         return function (input) {
