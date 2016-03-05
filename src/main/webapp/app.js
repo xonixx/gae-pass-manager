@@ -17,6 +17,13 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             });
         }
     }])
+    .filter('date1', ['$filter', function ($filter) {
+        var dateF = $filter('date');
+        return function (input) {
+            if (!input) return '';
+            return dateF(input, 'd MMM yyyy HH:mm');
+        }
+    }])
     .factory('Api', ['$resource', function ($resource) {
         return $resource('api?action=:action', {}, {
             loadData: {method: 'GET', params: {action: 'load'}},
@@ -90,8 +97,10 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             addOrUpdate: function (password) {
                 var existing = this.getByUid(password.uid);
                 if (existing) {
+                    password.updated = new Date().getTime();
                     angular.extend(existing, password);
                 } else {
+                    password.created = new Date().getTime();
                     this.getPasswords().push(password);
                 }
                 this.store();

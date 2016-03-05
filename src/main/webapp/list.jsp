@@ -11,7 +11,7 @@
             <%= Logic.getCurrentUser().getEmail() %>
             <a href="#/logout">(Logout)</a>
         </div>
-        <div id="pass-count">Total passwords: {{passwords.length}}. Last updated: {{lastUpdated | date:'d MMM yyyy HH:mm'}}</div>
+        <div id="pass-count">Total passwords: {{passwords.length}}. Last updated: {{lastUpdated | date1}}</div>
     </div>
     <div class="row">
         <div class="col-xs-12">
@@ -32,7 +32,9 @@
             </div>
         </div>
         <div class="col-xs-2">
-            <input readonly type="password" pass="" ng-model="p.pass" style="width: 100%; margin-top: 8px">
+            <input readonly type="password" pass="" ng-model="p.pass" style="width: 100%; margin-top: 3px">
+            <div ng-if="p.created">Created: {{p.created | date1}}</div>
+            <div ng-if="p.updated">Updated: {{p.updated | date1}}</div>
         </div>
     </div>
 </div>
