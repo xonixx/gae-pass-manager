@@ -22,7 +22,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             saveData: {method: 'POST', params: {action: 'save'}}
         });
     }])
-    .factory('PasswordsFunctions', ['Api', function (Api) {
+    .factory('PasswordsFunctions', ['Api', '$rootScope', function (Api, $rootScope) {
         // TODO: date created/updated
         var pf;
         return pf = {
@@ -32,6 +32,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             loadData: function () {
                 return Api.loadData(function (res) {
                     pf.dataEncrypted = res.data;
+                    $rootScope.lastUpdated = res.lastUpdated;
                 });
             },
             isNew: function () {
@@ -58,7 +59,9 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             },
             store: function () {
                 this.encrypt();
-                return Api.saveData({data: this.dataEncrypted});
+                return Api.saveData({data: this.dataEncrypted}, function (res) {
+                    $rootScope.lastUpdated = res.lastUpdated;
+                });
             },
             getPasswords: function () {
                 return this.data.passwords;

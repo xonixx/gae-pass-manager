@@ -6,6 +6,7 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * User: xonix
@@ -13,7 +14,9 @@ import com.google.gson.Gson;
  * Time: 19:47
  */
 public class Logic {
-    public static final Gson gson = new Gson();
+    public static final Gson gson = new GsonBuilder()
+            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+            .create();
 
     // TODO: do we need to cache?
     public static UserService getUserService() {

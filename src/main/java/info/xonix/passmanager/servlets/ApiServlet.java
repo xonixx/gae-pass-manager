@@ -107,14 +107,18 @@ public class ApiServlet extends HttpServlet {
             Entity data = new Entity(ENTITY_DATA, KEY_MASTER_DATA);
             String val = (String) json.get("data");
             data.setProperty(PROP_VALUE, new Text(val));
-            data.setProperty(PROP_TIMESTAMP, new Date());
+            Date lastUpdated = new Date();
+            data.setProperty(PROP_TIMESTAMP, lastUpdated);
             data.setProperty(PROP_LAST_BACKUP_KEY, newBackupKey);
 
             log.info("Storing data of size: " + val.length());
 
             Logic.getDatastoreService().put(data);
 
-            resp.getWriter().print("{\"success\":true}");
+            Map<String, Object> res = new LinkedHashMap<>();
+            res.put("success", true);
+            res.put("lastUpdated", lastUpdated);
+            resp.getWriter().print(Logic.gson.toJson(res));
             resp.getWriter().flush();
         }
     }

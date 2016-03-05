@@ -11,7 +11,7 @@
             <%= Logic.getCurrentUser().getEmail() %>
             <a href="<%= Logic.getLogoutUrl() %>">(Logout)</a>
         </div>
-        <div id="pass-count">Total passwords: {{passwords.length}}</div>
+        <div id="pass-count">Total passwords: {{passwords.length}}. Last updated: {{lastUpdated | date:'d MMM yyyy HH:mm'}}</div>
     </div>
     <div class="row">
         <div class="col-xs-12">
