@@ -35,12 +35,12 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
 
         var pf;
         return pf = {
-            data: null,
+            data: {},
             dataEncrypted: null,
             masterPassword: null,
             reset: function () {
                 this.setMasterPassword(null);
-                this.data = null;
+                this.data = {};
                 this.dataEncrypted = null;
             },
             loadData: function () {
@@ -56,7 +56,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 return !this.dataEncrypted;
             },
             isDecrypted: function () {
-                return this.data != null;
+                return this.data.passwords != null;
             },
             setMasterPassword: function (pass) {
                 // TODO check if we change pw!!!

@@ -32,7 +32,7 @@
             </div>
         </div>
         <div class="col-xs-2">
-            <input type="password" pass="" ng-model="p.pass" style="width: 100%; margin-top: 8px">
+            <input readonly type="password" pass="" ng-model="p.pass" style="width: 100%; margin-top: 8px">
         </div>
     </div>
 </div>
