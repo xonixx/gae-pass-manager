@@ -191,13 +191,39 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             }
         }
     }])
-    .controller('RootCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+    .controller('RootCtrl', ['$scope', '$timeout', 'Logic', function ($scope, $timeout, Logic) {
         $scope.flash = function (msg) {
             $scope.flashMsg = msg;
             $timeout(function () {
                 delete $scope.flashMsg;
-            }, 2000)
+            }, 2000);
+        };
+        function inactivityChecker(allowedInactivitySec, callback) {
+            var idleSecs = 0;
+
+            function timerIncrement() {
+                idleSecs++;
+                console.info(111, idleSecs)
+                if (idleSecs > allowedInactivitySec) {
+                    clearInterval(idleInterval);
+                    callback()
+                }
+            }
+
+            var idleInterval = setInterval(timerIncrement, 1000);
+
+            $('body').on('click mousemove keyup', function () {
+                idleSecs = 0;
+                console.info(222, idleSecs)
+            });
         }
+
+        inactivityChecker(10, function () {
+            Logic.reset();
+            $scope.flash('You were logged out after 5 min of inactivity!');
+            $scope.$apply();
+            location.href = '#/login';
+        })
     }])
     .controller('LoginCtrl', ['$scope', 'Logic', function ($scope, Logic) {
         Logic.loadData().$promise.then(function () {
