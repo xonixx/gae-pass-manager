@@ -191,6 +191,14 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             }
         }
     }])
+    .controller('RootCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+        $scope.flash = function (msg) {
+            $scope.flashMsg = msg;
+            $timeout(function () {
+                delete $scope.flashMsg;
+            }, 2000)
+        }
+    }])
     .controller('LoginCtrl', ['$scope', 'Logic', function ($scope, Logic) {
         Logic.loadData().$promise.then(function () {
             $scope.isNew = Logic.isNew();
@@ -238,6 +246,12 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 $scope.error = 'New Password and Confirm New Password are not same!';
                 return;
             }
+
+            Logic.setMasterPassword(pass);
+            Logic.store().$promise.then(function () {
+                $scope.flash('Successfully updated master password.');
+                location.href = '#/list';
+            });
         };
         $scope.cancel = function() {
             location.href = '#/list';

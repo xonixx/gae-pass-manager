@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="app.css"/>
 </head>
 
-<body ng-app="pass-manager">
+<body ng-app="pass-manager" ng-controller="RootCtrl">
+    <div class="alert alert-success" ng-if="flashMsg">{{flashMsg}}</div>
     <ng-view></ng-view>
 </body>
