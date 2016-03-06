@@ -27,8 +27,12 @@
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
-                <button ng-if="!isNew" type="button" class="btn btn-success" ng-click="login(pass)">Login</button>
-                <button ng-if="isNew" type="button" class="btn btn-success" ng-click="register(pass,passConfirm)">
+                <button ng-if="!isNew" type="button" class="btn btn-success"
+                        ng-disabled="!pass"
+                        ng-click="login(pass)">Login</button>
+                <button ng-if="isNew" type="button" class="btn btn-success"
+                        ng-disabled="!pass || !passConfirm"
+                        ng-click="register(pass,passConfirm)">
                     Register
                 </button>
             </div>

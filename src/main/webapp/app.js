@@ -223,6 +223,25 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
         location.href = '#/login';
     }])
     .controller('ChangeMasterCtrl', ['$scope', 'Logic', function ($scope, Logic) {
+        if (Logic.isNew()) {
+            location.href = '#/login';
+            return;
+        }
+
+        $scope.doChangeMaster = function (passOld, pass, passConfirm) {
+            if (Logic.masterPassword != passOld) {
+                $scope.error = 'Old Password is incorrect!';
+                return;
+            }
+
+            if (pass != passConfirm) {
+                $scope.error = 'New Password and Confirm New Password are not same!';
+                return;
+            }
+        };
+        $scope.cancel = function() {
+            location.href = '#/list';
+        }
     }])
     .controller('ListCtrl', ['$scope', 'Logic', function ListCtrl($scope, Logic) {
         if (Logic.isNew()) {
