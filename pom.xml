@@ -8,6 +8,10 @@
     <groupId>info.xonix.gae-pass-manager</groupId>
     <artifactId>gae-pass-manager</artifactId>
 
+    <prerequisites>
+        <maven>3.1.0</maven>
+    </prerequisites>
+
     <properties>
         <app.id>xonixpwd</app.id>
         <app.version>1</app.version>
@@ -25,10 +29,6 @@
             </properties>
         </profile>
     </profiles>
-
-    <prerequisites>
-        <maven>3.1.0</maven>
-    </prerequisites>
 
     <dependencies>
         <!-- Compile/runtime dependencies -->

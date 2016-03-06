@@ -88,14 +88,18 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             data: {},
             dataEncrypted: null,
             masterPassword: null,
+            decrypted: false,
+
             reset: function () {
                 this.setMasterPassword(null);
                 this.data = {};
                 this.dataEncrypted = null;
+                this.decrypted = false;
             },
             loadData: function () {
                 return Api.loadData(function (res) {
                     pf.dataEncrypted = res.data;
+                    pf.decrypted = false;
                     var mp = getPersitedMasterPass();
                     if (mp)
                         pf.decrypt(mp);
@@ -106,7 +110,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 return !this.dataEncrypted;
             },
             isDecrypted: function () {
-                return this.data.passwords != null;
+                return this.decrypted;
             },
             setMasterPassword: function (pass) {
                 // TODO check if we change pw!!!
@@ -122,10 +126,10 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 if (decrText === null)
                     return false;
 
+                this.decrypted = true;
                 this.data = angular.fromJson(decrText);
-                if (!this.data.passwords)
-                    this.data.passwords = [];
                 this.setMasterPassword(pass);
+
                 return true;
             },
             store: function () {
@@ -135,7 +139,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 });
             },
             getPasswords: function () {
-                return this.data.passwords;
+                return (this.data.passwords || (this.data.passwords = []));
             },
             addOrUpdate: function (password) {
                 var existing = this.getByUid(password.uid);
