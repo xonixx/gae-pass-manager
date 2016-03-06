@@ -243,20 +243,22 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
         }
     }])
     .controller('LoginCtrl', ['$scope', 'Logic', function ($scope, Logic) {
+        function proceedToMainScreen() {
+            $scope.startInactivityChecker();
+            location.href = '#/list';
+        }
+
         Logic.loadData().$promise.then(function () {
             $scope.isNew = Logic.isNew();
-            if (Logic.isDecrypted()) {
-                location.href = '#/list';
-            }
+            if (Logic.isDecrypted())
+                proceedToMainScreen();
         });
 
         $scope.login = function (pass) {
             if (!Logic.decrypt(pass)) {
                 $scope.errorDanger = 'Wrond password! Please try again.'
-            } else {
-                $scope.startInactivityChecker();
-                location.href = '#/list';
-            }
+            } else
+                proceedToMainScreen();
         };
         $scope.register = function (pass, passConfirm) {
             $scope.error = null;
@@ -264,10 +266,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 $scope.error = 'Password and Confirm Password are not same!'
             } else {
                 Logic.setMasterPassword(pass);
-                Logic.store().$promise.then(function () {
-                    $scope.startInactivityChecker();
-                    location.href = '#/list';
-                });
+                Logic.store().$promise.then(proceedToMainScreen);
             }
         }
     }])
