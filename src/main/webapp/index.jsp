@@ -23,5 +23,9 @@
 
 <body ng-app="pass-manager" ng-controller="RootCtrl">
     <div class="alert alert-success" ng-if="flashMsg">{{flashMsg}}</div>
+    <div class="alert alert-danger" ng-if="flashErr">
+        <button type="button" class="close" title="Close" ng-click="$parent.flashErr=null">&times;</button>
+        <b>{{flashErr}}</b>
+    </div>
     <ng-view></ng-view>
 </body>

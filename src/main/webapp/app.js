@@ -151,14 +151,14 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                     password.created = new Date().getTime();
                     this.getPasswords().push(password);
                 }
-                this.store();
+                return this.store();
             },
             remove: function (password) {
                 var p = this.getByUid(password.uid);
                 var pp = this.getPasswords();
                 var idx = pp.indexOf(p);
                 pp.splice(idx, 1);
-                this.store();
+                return this.store();
             },
             getByUid: function (uid) {
                 var pp = this.getPasswords();
@@ -193,17 +193,31 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
     }])
     .controller('RootCtrl', ['$scope', '$timeout', 'Logic', function ($scope, $timeout, Logic) {
         $scope.flash = function (msg) {
+            $scope.flashError(null);
             $scope.flashMsg = msg;
             $timeout(function () {
                 delete $scope.flashMsg;
             }, 2000);
+        };
+        $scope.toFlash = function (msg) {
+            return function () {
+                $scope.flash(msg);
+            }
+        };
+        $scope.flashError = function (err) {
+            $scope.flashErr = err;
+        };
+        $scope.toFlashError = function (err) {
+            return function () {
+                $scope.flashError(err);
+            }
         };
         function inactivityChecker(allowedInactivitySec, callback) {
             var idleSecs = 0;
 
             function timerIncrement() {
                 idleSecs++;
-                console.info('inactive', idleSecs);
+                //console.info('inactive', idleSecs);
                 if (idleSecs > allowedInactivitySec) {
                     canceler();
                     callback()
@@ -215,23 +229,24 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             var body = $('body');
             body.on('click.inactivityChecker mousemove.inactivityChecker keyup.inactivityChecker', function () {
                 idleSecs = 0;
-                console.info('zeroing inactive', idleSecs);
+                //console.info('zeroing inactive', idleSecs);
             });
 
             function canceler() {
                 clearInterval(idleInterval);
                 body.off('click.inactivityChecker mousemove.inactivityChecker keyup.inactivityChecker');
-                console.info('canceled inactive');
+                //console.info('canceled inactive');
             }
 
             return canceler;
         }
 
+        var ALLOWED_INACTIVITY_MINS = 5;
         var inactiveCheckerrCanceler;
         $scope.startInactivityChecker = function () {
-            inactiveCheckerrCanceler = inactivityChecker(15, function () {
+            inactiveCheckerrCanceler = inactivityChecker(ALLOWED_INACTIVITY_MINS * 60, function () {
                 Logic.reset();
-                $scope.flash('You were logged out after 5 min of inactivity!');
+                $scope.flashError('You were logged out after ' + ALLOWED_INACTIVITY_MINS + ' min of inactivity!');
                 $scope.$apply();
                 location.href = '#/login';
             })
@@ -244,6 +259,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
     }])
     .controller('LoginCtrl', ['$scope', 'Logic', function ($scope, Logic) {
         function proceedToMainScreen() {
+            $scope.flashError(null);
             $scope.startInactivityChecker();
             location.href = '#/list';
         }
@@ -321,7 +337,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             var l = '--------------------------------------------\n';
             if (confirm(l + 'Are you sure you want to remove password for ' + (password.url || password.login) + '?\n' + l)
                 && confirm(l + '???   ARE YOU REALLY SURE   ???\n' + l)) {
-                Logic.remove(password);
+                Logic.remove(password).$promise.then($scope.toFlash('Password removed.'));
             }
         }
     }])
@@ -346,7 +362,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 for (var i = 0; i < $scope.tags.length; i++) {
                     password.tags.push($scope.tags[i].text);
                 }
-                Logic.addOrUpdate(password);
+                Logic.addOrUpdate(password).$promise.then($scope.toFlash('Data saved.'));
                 $scope.cancel();// TODO: error reporting
             };
             $scope.loadTags = function (q) {
