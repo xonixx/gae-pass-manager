@@ -3,6 +3,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
         $routeProvider
             .when('/login', {templateUrl: 'login.jsp', controller: 'LoginCtrl'})
             .when('/logout', {template: '', controller: 'LogoutCtrl'})
+            .when('/changeMaster', {templateUrl: 'changeMaster.jsp', controller: 'ChangeMasterCtrl'})
             .when('/list', {templateUrl: 'list.jsp', controller: 'ListCtrl'})
             .when('/add', {templateUrl: 'add.jsp', controller: 'AddCtrl'})
             .when('/edit/:uid', {templateUrl: 'add.jsp', controller: 'AddCtrl'})
@@ -220,6 +221,8 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
     .controller('LogoutCtrl', ['$scope', 'Logic', function ($scope, Logic) {
         Logic.reset();
         location.href = '#/login';
+    }])
+    .controller('ChangeMasterCtrl', ['$scope', 'Logic', function ($scope, Logic) {
     }])
     .controller('ListCtrl', ['$scope', 'Logic', function ListCtrl($scope, Logic) {
         if (Logic.isNew()) {
