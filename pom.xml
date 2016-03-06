@@ -17,6 +17,15 @@
         <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
     </properties>
 
+    <profiles>
+        <profile>
+            <id>stag</id>
+            <properties>
+                <app.id>xonixpwd-test</app.id>
+            </properties>
+        </profile>
+    </profiles>
+
     <prerequisites>
         <maven>3.1.0</maven>
     </prerequisites>
