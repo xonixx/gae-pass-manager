@@ -203,27 +203,44 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
 
             function timerIncrement() {
                 idleSecs++;
-                console.info(111, idleSecs)
+                console.info('inactive', idleSecs);
                 if (idleSecs > allowedInactivitySec) {
-                    clearInterval(idleInterval);
+                    canceler();
                     callback()
                 }
             }
 
             var idleInterval = setInterval(timerIncrement, 1000);
 
-            $('body').on('click mousemove keyup', function () {
+            var body = $('body');
+            body.on('click.inactivityChecker mousemove.inactivityChecker keyup.inactivityChecker', function () {
                 idleSecs = 0;
-                console.info(222, idleSecs)
+                console.info('zeroing inactive', idleSecs);
             });
+
+            function canceler() {
+                clearInterval(idleInterval);
+                body.off('click.inactivityChecker mousemove.inactivityChecker keyup.inactivityChecker');
+                console.info('canceled inactive');
+            }
+
+            return canceler;
         }
 
-        inactivityChecker(10, function () {
-            Logic.reset();
-            $scope.flash('You were logged out after 5 min of inactivity!');
-            $scope.$apply();
-            location.href = '#/login';
-        })
+        var inactiveCheckerrCanceler;
+        $scope.startInactivityChecker = function () {
+            inactiveCheckerrCanceler = inactivityChecker(15, function () {
+                Logic.reset();
+                $scope.flash('You were logged out after 5 min of inactivity!');
+                $scope.$apply();
+                location.href = '#/login';
+            })
+        };
+
+        $scope.cancelInactivityChecker = function () {
+            if (inactiveCheckerrCanceler)
+                inactiveCheckerrCanceler();
+        }
     }])
     .controller('LoginCtrl', ['$scope', 'Logic', function ($scope, Logic) {
         Logic.loadData().$promise.then(function () {
@@ -237,6 +254,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             if (!Logic.decrypt(pass)) {
                 $scope.errorDanger = 'Wrond password! Please try again.'
             } else {
+                $scope.startInactivityChecker();
                 location.href = '#/list';
             }
         };
@@ -247,6 +265,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             } else {
                 Logic.setMasterPassword(pass);
                 Logic.store().$promise.then(function () {
+                    $scope.startInactivityChecker();
                     location.href = '#/list';
                 });
             }
@@ -254,6 +273,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
     }])
     .controller('LogoutCtrl', ['$scope', 'Logic', function ($scope, Logic) {
         Logic.reset();
+        $scope.cancelInactivityChecker();
         location.href = '#/login';
     }])
     .controller('ChangeMasterCtrl', ['$scope', 'Logic', function ($scope, Logic) {
