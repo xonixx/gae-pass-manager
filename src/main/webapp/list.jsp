@@ -1,17 +1,21 @@
 <%@ page import="info.xonix.passmanager.Logic" %>
 <div class="container-fluid">
-    <h3>Passwords
-        <button type="button" ng-click="addNew()"
-                class="btn btn-info btn-sm"
-                style="margin-left: 150px;margin-top: -10px">Add New
-        </button>
-    </h3>
-    <div id="info-block">
-        <div id="current-user">
-            <%= Logic.getCurrentUser().getEmail() %>
-            <a href="#/logout">(Logout)</a>
+    <div class="row" id="header">
+        <div class="col-xs-4">
+            <h3>Passwords</h3>
         </div>
-        <div id="pass-count">Total passwords: {{passwords.length}}. Last updated: {{lastUpdated | date1}}</div>
+        <div class="col-xs-4" style="padding-top: 5px">
+            <button type="button" ng-click="addNew()"
+                    class="btn btn-info btn-sm">Add New Password</button>
+            <a href="#/changeMaster" style="float: right">Change master password</a>
+        </div>
+        <div class="col-xs-4" id="info-block">
+            <div id="current-user">
+                <%= Logic.getCurrentUser().getEmail() %>
+                <a href="#/logout">(Logout)</a>
+            </div>
+            <div id="pass-count">Total passwords: {{passwords.length}}. Last updated: {{lastUpdated | date1}}</div>
+        </div>
     </div>
     <div class="row">
         <div class="col-xs-12">

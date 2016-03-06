@@ -236,6 +236,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             location.href = '#/edit/' + password.uid;
         };
         $scope.delete = function (password) {
+            // TODO: better dialog with danger logo
             var l = '--------------------------------------------\n';
             if (confirm(l + 'Are you sure you want to remove password for ' + (password.url || password.login) + '?\n' + l)
                 && confirm(l + '???   ARE YOU REALLY SURE   ???\n' + l)) {
