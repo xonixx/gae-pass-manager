@@ -43,4 +43,21 @@ public class Logic {
         globals.put("email", getCurrentUser().getEmail());
         return gson.toJson(globals);
     }
+
+    public static String renderJsCss(String jsCssBlockContent) {
+        String[] lines = jsCssBlockContent.trim().split("\n");
+        StringBuilder res = new StringBuilder();
+
+        for (String line : lines) {
+            line = line.trim();
+            if (line.endsWith(".js"))
+                res.append("<script src=\"").append(line).append("\"></script>\n");
+            else if (line.endsWith(".css"))
+                res.append("<link rel=\"stylesheet\" href=\"").append(line).append("\"/>\n");
+            else
+                res.append("<script>alert(\"Can't determine JS/CSS type: ").append(line).append("\")</script>\n");
+        }
+
+        return res.toString();
+    }
 }

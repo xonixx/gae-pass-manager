@@ -5,21 +5,23 @@
 <title>Personal password manager</title>
 
 <c:set var="minSuffix" value="<%= Env.getMinSuffix() %>"/>
-
+<c:set var="jsCss">
+    lib/jquery/jquery-2.2.1${minSuffix}.js
+    lib/bootstrap/js/bootstrap${minSuffix}.js
+    lib/angular-1.4.9/angular${minSuffix}.js
+    lib/angular-1.4.9/angular-route${minSuffix}.js
+    lib/angular-1.4.9/angular-resource${minSuffix}.js
+    lib/ng-tags-input/ng-tags-input${minSuffix}.js
+    lib/sjcl/sjcl.js
+    lib/clipboardjs/clipboard${minSuffix}.js
+    lib/bootstrap/css/bootstrap${minSuffix}.css
+    lib/bootstrap/css/bootstrap-theme${minSuffix}.css
+    lib/ng-tags-input/ng-tags-input${minSuffix}.css
+    app.js
+    app.css
+</c:set>
 <head>
-    <script src="lib/jquery/jquery-2.2.1${minSuffix}.js"></script>
-    <script src="lib/bootstrap/js/bootstrap${minSuffix}.js"></script>
-    <script src="lib/angular-1.4.9/angular${minSuffix}.js"></script>
-    <script src="lib/angular-1.4.9/angular-route${minSuffix}.js"></script>
-    <script src="lib/angular-1.4.9/angular-resource${minSuffix}.js"></script>
-    <script src="lib/ng-tags-input/ng-tags-input${minSuffix}.js"></script>
-    <script src="lib/sjcl/sjcl.js"></script>
-    <script src="lib/clipboardjs/clipboard${minSuffix}.js"></script>
-    <link rel="stylesheet" href="lib/bootstrap/css/bootstrap${minSuffix}.css"/>
-    <link rel="stylesheet" href="lib/bootstrap/css/bootstrap-theme${minSuffix}.css"/>
-    <link rel="stylesheet" href="lib/ng-tags-input/ng-tags-input${minSuffix}.css"/>
-    <script src="app.js"></script>
-    <link rel="stylesheet" href="app.css"/>
+    <%= Logic.renderJsCss((String) pageContext.getAttribute("jsCss")) %>
     <script>
         var global=<%= Logic.renderGlobals() %>;
     </script>
