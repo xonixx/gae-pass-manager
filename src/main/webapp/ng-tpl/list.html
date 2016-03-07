@@ -6,9 +6,10 @@
         <div class="col-xs-4" style="padding-top: 5px">
             <div ng-if="!readonly">
                 <a href="#/add" class="btn btn-info btn-sm">Add New Password</a>
-                <a href="#/changeMaster" style="float: right">Change master password</a>
-                <br/>
-                <a href="?offline" style="float: right">Offline version</a>
+                <div style="float: right" class="text-right">
+                    <a href="#/changeMaster">Change master password</a><br>
+                    <a href="?offline">Offline version</a>
+                </div>
             </div>
         </div>
         <div class="col-xs-4" id="info-block">
