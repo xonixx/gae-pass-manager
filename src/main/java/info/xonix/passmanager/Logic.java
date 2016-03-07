@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * User: xonix
@@ -86,17 +87,46 @@ public class Logic {
         return res.toString();
     }
 
+    /**
+     * TODO: use data URI?
+     */
     private static String getStringContent(ServletContext servletContext, String path) {
         if (!path.startsWith("/"))
             path = "/" + path;
 
+        String str = pathToString(servletContext, path);
+        str = str.replaceAll("</script>", "");
+        str = str.replaceAll("</style>", "");
+        return str;
+    }
+
+    private static String pathToString(ServletContext servletContext, String path) {
         try (InputStream inputStream = servletContext.getResourceAsStream(path)) {
-            String str = CharStreams.toString(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-            str = str.replaceAll("</script>", "");
-            str = str.replaceAll("</style>", "");
-            return str;
+            return CharStreams.toString(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String renderNgTemplates(PageContext pageContext, boolean offline) {
+        if (!offline)
+            return "";
+
+        StringBuilder sb = new StringBuilder();
+        ServletContext servletContext = pageContext.getServletContext();
+        Set files = servletContext.getResourcePaths("/");
+        for (Object file : files) {
+            String fileName = (String) file;
+            if (fileName.startsWith("/"))
+                fileName = fileName.substring(1);
+            if (fileName.endsWith(".html")) {
+                sb.append("<script type=\"text/ng-template\" id=\"")
+                        .append(fileName)
+                        .append("\">\n")
+                        .append(pathToString(servletContext, "/" + fileName))
+                        .append("\n</script>\n");
+            }
+        }
+        return sb.toString();
     }
 }

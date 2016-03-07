@@ -2,6 +2,7 @@
 <%@ page import="info.xonix.passmanager.Logic" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
+<html ng-app="pass-manager">
 <title>Personal password manager</title>
 
 <c:set var="minSuffix" value="<%= Env.getMinSuffix() %>"/>
@@ -20,14 +21,17 @@
     app.js
     app.css
 </c:set>
+
 <head>
-    <%= Logic.renderJsCss(pageContext, "jsCss", true) %>
+    <% boolean offline = request.getParameter("offline") != null; %>
+    <%= Logic.renderNgTemplates(pageContext, offline) %>
+    <%= Logic.renderJsCss(pageContext, "jsCss", offline) %>
     <script>
         var global=<%= Logic.renderGlobals() %>;
     </script>
 </head>
 
-<body ng-app="pass-manager" ng-controller="RootCtrl">
+<body ng-controller="RootCtrl">
     <div class="alert alert-success" ng-if="flashMsg">{{flashMsg}}</div>
     <div class="alert alert-danger" ng-if="flashErr">
         <button type="button" class="close" title="Close" ng-click="$parent.flashErr=null">&times;</button>
@@ -35,3 +39,4 @@
     </div>
     <ng-view></ng-view>
 </body>
+</html>
