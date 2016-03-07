@@ -21,7 +21,7 @@
     app.css
 </c:set>
 <head>
-    <%= Logic.renderJsCss((String) pageContext.getAttribute("jsCss")) %>
+    <%= Logic.renderJsCss(pageContext, "jsCss", true) %>
     <script>
         var global=<%= Logic.renderGlobals() %>;
     </script>
