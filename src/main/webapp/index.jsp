@@ -1,6 +1,15 @@
 <%@ page import="info.xonix.passmanager.Env" %>
 <%@ page import="info.xonix.passmanager.Logic" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.Date" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%
+    boolean offline = request.getParameter("offline") != null;
+    if (offline) {
+        response.addHeader("Content-Disposition", "attachment; filename=Passwords_" +
+                new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ".html");
+    }
+%>
 <!DOCTYPE html>
 <html ng-app="pass-manager">
 <title>Personal password manager</title>
@@ -23,7 +32,6 @@
 </c:set>
 
 <head>
-    <% boolean offline = request.getParameter("offline") != null; %>
     <script>
         var global=<%= Logic.renderGlobals(offline) %>;
     </script>
