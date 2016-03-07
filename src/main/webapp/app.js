@@ -74,7 +74,9 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             saveData: {method: 'POST', params: {action: 'save'}}
         });
     }])
-    .factory('Logic', ['Api', '$rootScope', function (Api, $rootScope) {
+    .factory('Logic', ['Api', '$rootScope', '$q', function (Api, $rootScope, $q) {
+        var offlineData = window.global.offlineData;
+
         // TODO: date created/updated
         function persistMasterPass(pass) {
             window.name = pass; // TODO: is this secure???
@@ -98,14 +100,19 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 this.decrypted = false;
             },
             loadData: function () {
-                return Api.loadData(function (res) {
+                var postLoad = function (res) {
                     pf.dataEncrypted = res.data;
                     pf.decrypted = false;
                     var mp = getPersitedMasterPass();
                     if (mp)
                         pf.decrypt(mp);
                     $rootScope.lastUpdated = res.lastUpdated;
-                });
+                };
+                if (offlineData) {
+                    console.info("Using offline");
+                    return { $promise: $q.when(offlineData, postLoad) };
+                } else
+                    return Api.loadData(postLoad);
             },
             isNew: function () {
                 return !this.dataEncrypted;
@@ -193,6 +200,8 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
     }])
     .controller('RootCtrl', ['$scope', '$timeout', 'Logic', function ($scope, $timeout, Logic) {
         $scope.global = window.global;
+        $scope.readonly = !!window.global.offlineData;
+
         $scope.flash = function (msg) {
             $scope.flashError(null);
             $scope.flashMsg = msg;
@@ -327,12 +336,6 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
 
         $scope.passwords = Logic.getPasswords();
 
-        $scope.addNew = function () {
-            location.href = '#/add';
-        };
-        $scope.edit = function (password) {
-            location.href = '#/edit/' + password.uid;
-        };
         $scope.delete = function (password) {
             // TODO: better dialog with danger logo
             var l = '--------------------------------------------\n';

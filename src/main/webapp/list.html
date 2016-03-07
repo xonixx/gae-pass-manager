@@ -4,12 +4,12 @@
             <h3>Passwords</h3>
         </div>
         <div class="col-xs-4" style="padding-top: 5px">
-            <button type="button" ng-click="addNew()"
-                    class="btn btn-info btn-sm">Add New Password</button>
-
-            <a href="#/changeMaster" style="float: right">Change master password</a>
-            <br/>
-            <a href="?offline" target="_blank" style="float: right">Offline version</a>
+            <div ng-if="!readonly">
+                <a href="#/add" class="btn btn-info btn-sm">Add New Password</a>
+                <a href="#/changeMaster" style="float: right">Change master password</a>
+                <br/>
+                <a href="?offline" target="_blank" style="float: right">Offline version</a>
+            </div>
         </div>
         <div class="col-xs-4" id="info-block">
             <div id="current-user">
@@ -32,8 +32,10 @@
             <div class="row">
                 <div class="col-xs-6"><span ng-repeat="t in p.tags" class="tag">{{t}}</span></div>
                 <div class="col-xs-6">
-                    <button type="button" class="btn btn-success btn-xs" ng-click="edit(p)">Edit</button>
-                    <button type="button" class="btn btn-warning btn-xs" ng-click="delete(p)">Delete</button>
+                    <a class="btn btn-success btn-xs" href="#/edit/{{p.uid}}">{{readonly ? 'View' : 'Edit'}}</a>
+                    <button type="button" class="btn btn-warning btn-xs"
+                            ng-if="!readonly"
+                            ng-click="delete(p)">Delete</button>
                 </div>
             </div>
         </div>
