@@ -123,16 +123,14 @@ public class Logic {
 
         StringBuilder sb = new StringBuilder();
         ServletContext servletContext = pageContext.getServletContext();
-        Set files = servletContext.getResourcePaths("/");
+        Set files = servletContext.getResourcePaths("/ng-tpl/");
         for (Object file : files) {
             String fileName = (String) file;
-            if (fileName.startsWith("/"))
-                fileName = fileName.substring(1);
             if (fileName.endsWith(".html")) {
                 sb.append("<script type=\"text/ng-template\" id=\"")
                         .append(fileName)
                         .append("\">\n")
-                        .append(pathToString(servletContext, "/" + fileName))
+                        .append(pathToString(servletContext, fileName))
                         .append("\n</script>\n");
             }
         }

@@ -1,12 +1,12 @@
 angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
     .config(['$routeProvider', function ($routeProvider) {
         $routeProvider
-            .when('/login', {templateUrl: 'login.html', controller: 'LoginCtrl'})
+            .when('/login', {templateUrl: '/ng-tpl/login.html', controller: 'LoginCtrl'})
             .when('/logout', {template: '', controller: 'LogoutCtrl'})
-            .when('/changeMaster', {templateUrl: 'changeMaster.html', controller: 'ChangeMasterCtrl'})
-            .when('/list', {templateUrl: 'list.html', controller: 'ListCtrl'})
-            .when('/add', {templateUrl: 'add.html', controller: 'AddCtrl'})
-            .when('/edit/:uid', {templateUrl: 'add.html', controller: 'AddCtrl'})
+            .when('/changeMaster', {templateUrl: '/ng-tpl/changeMaster.html', controller: 'ChangeMasterCtrl'})
+            .when('/list', {templateUrl: '/ng-tpl/list.html', controller: 'ListCtrl'})
+            .when('/add', {templateUrl: '/ng-tpl/add.html', controller: 'AddCtrl'})
+            .when('/edit/:uid', {templateUrl: '/ng-tpl/add.html', controller: 'AddCtrl'})
             .otherwise({redirectTo: '/login'});
     }])
     .directive('pass', [function () {
