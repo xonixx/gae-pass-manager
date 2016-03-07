@@ -13,6 +13,13 @@
     margin-right: 0;
 }
 
+.pass-block .login {
+    font-weight: bold;
+}
+.pass-block .descr {
+    font-style: italic;
+}
+
 .pass-block .tag {
     background-color: #ffb;
     font-weight: bold;
