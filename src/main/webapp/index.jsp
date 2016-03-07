@@ -24,11 +24,11 @@
 
 <head>
     <% boolean offline = request.getParameter("offline") != null; %>
+    <script>
+        var global=<%= Logic.renderGlobals(offline) %>;
+    </script>
     <%= Logic.renderNgTemplates(pageContext, offline) %>
     <%= Logic.renderJsCss(pageContext, "jsCss", offline) %>
-    <script>
-        var global=<%= Logic.renderGlobals() %>;
-    </script>
 </head>
 
 <body ng-controller="RootCtrl">

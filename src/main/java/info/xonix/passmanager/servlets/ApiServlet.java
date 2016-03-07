@@ -43,31 +43,10 @@ public class ApiServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter(ACTION);
 
-        Entity data = null;
-        try {
-            data = Logic.getDatastoreService().get(KeyFactory.createKey(ENTITY_DATA, KEY_MASTER_DATA));
-        } catch (EntityNotFoundException e) {
-            log.info("Data not found");
-        }
-
         resp.setContentType("application/json");
 
         if (ACTION_LOAD.equals(action)) {
-            Map<String, Object> res = new LinkedHashMap<>();
-
-            if (data != null) {
-                String value = ((Text) data.getProperty(PROP_VALUE)).getValue();
-                Date timestamp = (Date) data.getProperty(PROP_TIMESTAMP);
-
-                log.info("Found data of size: " + value.length() + ", lastUpdated: " + timestamp);
-
-                res.put("data", value);
-                res.put("lastUpdated", timestamp);
-            } else {
-                log.info("No data saved yet...");
-            }
-
-            resp.getWriter().print(Logic.gson.toJson(res));
+            resp.getWriter().print(Logic.getEncyptedPassDataJson());
             resp.getWriter().flush();
         }
     }
