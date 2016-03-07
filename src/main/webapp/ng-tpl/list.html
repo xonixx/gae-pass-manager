@@ -25,7 +25,7 @@
             <input type="text" id="search-box" ng-model="searchStr" placeholder="Filter..."/>
         </div>
     </div>
-    <div ng-repeat="p in (passwords | filter:searchStr) track by p.uid" class="pass-block row">
+    <div ng-repeat="p in (passwords | filter:searchStr | orderBy:'updated||created||1':true) track by p.uid" class="pass-block row">
         <div class="col-xs-9">
             <div style="margin-bottom: 5px">
                 <a href="{{p.url}}" target="_blank" title="URL">{{p.url}}</a>
@@ -55,8 +55,8 @@
             <button ng-disabled="!p.secureData" type="button" class="btn btn-xs btn-danger"
                     copy-to-clipboard=""
                     data-clipboard-text="{{p.secureData}}">Copy secure data</button>
-            <div ng-if="p.created">Created: {{p.created | date1}}</div>
             <div ng-if="p.updated">Updated: {{p.updated | date1}}</div>
+            <div ng-if="p.created">Created: {{p.created | date1}}</div>
         </div>
     </div>
 </div>
