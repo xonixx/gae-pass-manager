@@ -1,4 +1,3 @@
-<%@ page import="info.xonix.passmanager.Logic" %>
 <div class="container-fluid">
     <div class="row" id="header">
         <div class="col-xs-4">
@@ -11,7 +10,7 @@
         </div>
         <div class="col-xs-4" id="info-block">
             <div id="current-user">
-                <%= Logic.getCurrentUser().getEmail() %>
+                {{global.email}}
                 <a href="#/logout">(Logout)</a>
             </div>
             <div id="pass-count">Total passwords: {{passwords.length}}. Last updated: {{lastUpdated | date1}}</div>
@@ -36,8 +35,8 @@
             </div>
         </div>
         <div class="col-xs-2">
-            <%--TODO ipad?--%>
-            <%--<input readonly type="password" pass="" ng-model="p.pass" style="width: 100%; margin-top: 3px">--%>
+            <!--TODO ipad?-->
+            <!--<input readonly type="password" pass="" ng-model="p.pass" style="width: 100%; margin-top: 3px">-->
             <button ng-disabled="!p.pass" type="button" class="btn btn-xs btn-primary"
                     copy-to-clipboard=""
                     data-clipboard-text="{{p.pass}}">Copy password</button>

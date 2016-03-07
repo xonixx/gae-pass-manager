@@ -1,4 +1,5 @@
 <%@ page import="info.xonix.passmanager.Env" %>
+<%@ page import="info.xonix.passmanager.Logic" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <title>Personal password manager</title>
@@ -19,6 +20,9 @@
     <link rel="stylesheet" href="lib/ng-tags-input/ng-tags-input${minSuffix}.css"/>
     <script src="app.js"></script>
     <link rel="stylesheet" href="app.css"/>
+    <script>
+        var global=<%= Logic.renderGlobals() %>;
+    </script>
 </head>
 
 <body ng-app="pass-manager" ng-controller="RootCtrl">

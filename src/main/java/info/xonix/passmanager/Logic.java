@@ -8,6 +8,9 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * User: xonix
  * Date: 21.02.16
@@ -33,5 +36,11 @@ public class Logic {
 
     public static String getLogoutUrl() {
         return getUserService().createLogoutURL("/");
+    }
+
+    public static String renderGlobals() {
+        Map<String, Object> globals = new LinkedHashMap<>();
+        globals.put("email", getCurrentUser().getEmail());
+        return gson.toJson(globals);
     }
 }

@@ -1,12 +1,12 @@
 angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
     .config(['$routeProvider', function ($routeProvider) {
         $routeProvider
-            .when('/login', {templateUrl: 'login.jsp', controller: 'LoginCtrl'})
+            .when('/login', {templateUrl: 'login.html', controller: 'LoginCtrl'})
             .when('/logout', {template: '', controller: 'LogoutCtrl'})
-            .when('/changeMaster', {templateUrl: 'changeMaster.jsp', controller: 'ChangeMasterCtrl'})
-            .when('/list', {templateUrl: 'list.jsp', controller: 'ListCtrl'})
-            .when('/add', {templateUrl: 'add.jsp', controller: 'AddCtrl'})
-            .when('/edit/:uid', {templateUrl: 'add.jsp', controller: 'AddCtrl'})
+            .when('/changeMaster', {templateUrl: 'changeMaster.html', controller: 'ChangeMasterCtrl'})
+            .when('/list', {templateUrl: 'list.html', controller: 'ListCtrl'})
+            .when('/add', {templateUrl: 'add.html', controller: 'AddCtrl'})
+            .when('/edit/:uid', {templateUrl: 'add.html', controller: 'AddCtrl'})
             .otherwise({redirectTo: '/login'});
     }])
     .directive('pass', [function () {
@@ -192,6 +192,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
         }
     }])
     .controller('RootCtrl', ['$scope', '$timeout', 'Logic', function ($scope, $timeout, Logic) {
+        $scope.global = window.global;
         $scope.flash = function (msg) {
             $scope.flashError(null);
             $scope.flashMsg = msg;
@@ -337,7 +338,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             var l = '--------------------------------------------\n';
             if (confirm(l + 'Are you sure you want to remove password for ' + (password.url || password.login) + '?\n' + l)
                 && confirm(l + '???   ARE YOU REALLY SURE   ???\n' + l)) {
-                Logic.remove(password).$promise.then($scope.toFlash('Password removed.'));
+                Logic.remove(password).$promise.then($scope.toFlash('Password deleted.'));
             }
         }
     }])
@@ -362,7 +363,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 for (var i = 0; i < $scope.tags.length; i++) {
                     password.tags.push($scope.tags[i].text);
                 }
-                Logic.addOrUpdate(password).$promise.then($scope.toFlash('Data saved.'));
+                Logic.addOrUpdate(password).$promise.then($scope.toFlash('Password saved.'));
                 $scope.cancel();// TODO: error reporting
             };
             $scope.loadTags = function (q) {
