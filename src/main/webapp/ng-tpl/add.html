@@ -1,5 +1,5 @@
 <div class="container">
-    <h3 class="text-center">{{isEdit ? 'Edit' : 'Add'}}</h3>
+    <h3 class="text-center">{{readonly ? 'View' : isEdit ? 'Edit' : 'Add'}}</h3>
     <form name="passForm" class="form-horizontal" novalidate autocomplete="off">
         <div style="height: 0;width: 0;overflow: hidden"><%-- hack against chrome autocomplete --%>
             <input type="text" name="fakeusername"/>
