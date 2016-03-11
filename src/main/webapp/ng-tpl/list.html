@@ -25,7 +25,7 @@
             <input type="text" id="search-box" ng-model="searchStr" placeholder="Filter..."/>
         </div>
     </div>
-    <div ng-repeat="p in (passwords | filter:searchStr | orderBy:'updated||created||1':true) track by p.uid" class="pass-block row">
+    <div ng-repeat="p in (filterPasswords(passwords,searchStr) | orderBy:'updated||created||1':true) track by p.uid" class="pass-block row">
         <div class="col-xs-9">
             <div style="margin-bottom: 5px">
                 <a href="{{p.url}}" target="_blank" title="URL">{{p.url}}</a>

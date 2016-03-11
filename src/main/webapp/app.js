@@ -336,6 +336,27 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
 
         $scope.passwords = Logic.getPasswords();
 
+        $scope.filterPasswords = function (passwords, searchStr) {
+            if (!searchStr)
+                return passwords;
+            var parts = searchStr.toLowerCase().replace(/ +/g, ' ').split(' ');
+            var res = [];
+            for (var i = 0; i < passwords.length; i++) {
+                var p = passwords[i];
+                var satisfies = true;
+                for (var j = 0; j < parts.length; j++) {
+                    var filterPart = parts[j];
+                    var pStr = [p.url, p.login, p.descr, (p.tags||[]).join(' ')].join(' ').toLowerCase();
+                    if (pStr.indexOf(filterPart) < 0) {
+                        satisfies = false;
+                        break;
+                    }
+                }
+                if (satisfies)
+                    res.push(p);
+            }
+            return res;
+        };
         $scope.delete = function (password) {
             // TODO: better dialog with danger logo
             var l = '--------------------------------------------\n';
