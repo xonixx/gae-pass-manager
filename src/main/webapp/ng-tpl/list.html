@@ -75,11 +75,21 @@
                         <div class="col-xs-10">
                             <p style="font-size: 1.8em;">
                                 Are you sure to delete password for <b>{{passToDel.url || passToDel.login}}</b>?</p>
+                            <p style="font-size: 2em; color: #f40">
+                                {{deleteConfirm2 ? 'Are you REALLY sure?' : '&nbsp;'}}
+                            </p>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary">Delete!</button>
+                    <button type="button" class="btn btn-danger" style="float: left"
+                            ng-if="deleteConfirm2"
+                            ng-click="delete(passToDel)">
+                        Yes, delete it!
+                    </button>
+                    <button type="button" class="btn btn-primary"
+                            ng-if="!deleteConfirm2"
+                            ng-click="$scope.deleteConfirm2=1">Delete!</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                 </div>
             </div>

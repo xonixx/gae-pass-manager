@@ -334,6 +334,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             return;
         }
 
+        $scope.$scope = $scope;
         $scope.passwords = Logic.getPasswords();
 
         $scope.filterPasswords = function (passwords, searchStr) {
@@ -358,14 +359,14 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             return res;
         };
         $scope.delete = function (password) {
-            // TODO: better dialog with danger logo
-            var l = '--------------------------------------------\n';
-            if (confirm(l + 'Are you sure you want to remove password for ' + (password.url || password.login) + '?\n' + l)
-                && confirm(l + '???   ARE YOU REALLY SURE   ???\n' + l)) {
-                Logic.remove(password).$promise.then($scope.toFlash('Password deleted.'));
-            }
+            Logic.remove(password).$promise.then(function () {
+                $scope.flash('Password deleted.');
+                $('#confirmDeleteModal').modal('hide');
+                delete $scope.passToDel;
+            });
         };
         $scope.preDelete = function (p) {
+            delete $scope.deleteConfirm2;
             $scope.passToDel = p;
         };
     }])
