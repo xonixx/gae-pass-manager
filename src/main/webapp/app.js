@@ -364,7 +364,10 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 && confirm(l + '???   ARE YOU REALLY SURE   ???\n' + l)) {
                 Logic.remove(password).$promise.then($scope.toFlash('Password deleted.'));
             }
-        }
+        };
+        $scope.preDelete = function (p) {
+            $scope.passToDel = p;
+        };
     }])
     .controller('AddCtrl', ['$scope', '$routeParams', 'Logic',
         function AddCtrl($scope, $routeParams, Logic) {
