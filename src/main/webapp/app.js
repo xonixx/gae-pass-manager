@@ -77,20 +77,18 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
     .factory('Logic', ['Api', '$rootScope', '$q', function (Api, $rootScope, $q) {
         var offlineData = window.global.offlineData;
 
-        // TODO: date created/updated
-        function persistMasterPass(pass) {
-            window.name = pass; // TODO: is this secure???
-        }
-
-        function getPersitedMasterPass() {
-            return window.name;
-        }
+        // restore on F5
+        $(window).on('beforeunload', function() {
+            window.name = pf.masterPassword;
+        });
+        var restoredMasterPass = window.name || null;
+        window.name = '';
 
         var pf;
         return pf = {
             data: {},
             dataEncrypted: null,
-            masterPassword: null,
+            masterPassword: restoredMasterPass,
             decrypted: false,
 
             reset: function () {
@@ -103,13 +101,11 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 var postLoad = function (res) {
                     pf.dataEncrypted = res.data;
                     pf.decrypted = false;
-                    var mp = getPersitedMasterPass();
-                    if (mp)
-                        pf.decrypt(mp);
+                    if (pf.masterPassword)
+                        pf.decrypt(pf.masterPassword);
                     $rootScope.lastUpdated = res.lastUpdated;
                 };
                 if (offlineData) {
-                    console.info("Using offline");
                     return { $promise: $q.when(offlineData, postLoad) };
                 } else
                     return Api.loadData(postLoad);
@@ -123,7 +119,6 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             setMasterPassword: function (pass) {
                 // TODO check if we change pw!!!
                 this.masterPassword = pass;
-                persistMasterPass(pass)
             },
             encrypt: function () {
                 this.dataEncrypted = encrypt(this.masterPassword, angular.toJson(this.data));
