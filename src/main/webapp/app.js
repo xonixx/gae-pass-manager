@@ -193,7 +193,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             }
         }
     }])
-    .controller('RootCtrl', ['$scope', '$timeout', 'Logic', function ($scope, $timeout, Logic) {
+    .controller('RootCtrl', ['$scope', '$location', '$timeout', 'Logic', function ($scope, $location, $timeout, Logic) {
         $scope.global = window.global;
         $scope.readonly = !!window.global.offlineData;
 
@@ -253,7 +253,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 Logic.reset();
                 $scope.flashError('You were logged out after ' + ALLOWED_INACTIVITY_MINS + ' min of inactivity!');
                 $scope.$apply();
-                location.href = '#/login';
+                $location.path('/login');
             })
         };
 
@@ -262,11 +262,11 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 inactiveCheckerrCanceler();
         }
     }])
-    .controller('LoginCtrl', ['$scope', 'Logic', function ($scope, Logic) {
+    .controller('LoginCtrl', ['$scope', '$location', 'Logic', function ($scope, $location, Logic) {
         function proceedToMainScreen() {
             $scope.flashError(null);
             $scope.startInactivityChecker();
-            location.href = '#/list';
+            $location.path('/list');
         }
 
         Logic.loadData().$promise.then(function () {
@@ -291,14 +291,14 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             }
         }
     }])
-    .controller('LogoutCtrl', ['$scope', 'Logic', function ($scope, Logic) {
+    .controller('LogoutCtrl', ['$scope', '$location', 'Logic', function ($scope, $location, Logic) {
         Logic.reset();
         $scope.cancelInactivityChecker();
-        location.href = '#/login';
+        $location.path('/login');
     }])
-    .controller('ChangeMasterCtrl', ['$scope', 'Logic', function ($scope, Logic) {
+    .controller('ChangeMasterCtrl', ['$scope', '$location', 'Logic', function ($scope, $location, Logic) {
         if (Logic.isNew()) {
-            location.href = '#/login';
+            $location.path('/login');
             return;
         }
 
@@ -316,16 +316,16 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             Logic.setMasterPassword(pass);
             Logic.store().$promise.then(function () {
                 $scope.flash('Successfully updated master password.');
-                location.href = '#/list';
+                $location.path('/list');
             });
         };
         $scope.cancel = function() {
-            location.href = '#/list';
+            $location.path('/list');
         }
     }])
-    .controller('ListCtrl', ['$scope', 'Logic', function ListCtrl($scope, Logic) {
+    .controller('ListCtrl', ['$scope', '$location', 'Logic', function ListCtrl($scope, $location, Logic) {
         if (Logic.isNew()) {
-            location.href = '#/login';
+            $location.path('/login');
             return;
         }
 
@@ -365,10 +365,10 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             $scope.passToDel = p;
         };
     }])
-    .controller('AddCtrl', ['$scope', '$routeParams', 'Logic',
-        function AddCtrl($scope, $routeParams, Logic) {
+    .controller('AddCtrl', ['$scope', '$location', '$routeParams', 'Logic',
+        function AddCtrl($scope, $location, $routeParams, Logic) {
             if (Logic.isNew()) {
-                location.href = '#/login';
+                $location.path('/login');
                 return;
             }
 
@@ -379,7 +379,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             $scope.tags = tagsToObjArr(p.tags);
 
             $scope.cancel = function () {
-                location.href = '#/list';
+                $location.path('/list');
             };
             $scope.save = function (password) {
                 password.tags = [];
