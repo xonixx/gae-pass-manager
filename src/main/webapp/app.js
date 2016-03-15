@@ -252,8 +252,8 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             inactiveCheckerrCanceler = inactivityChecker(ALLOWED_INACTIVITY_MINS * 60, function () {
                 Logic.reset();
                 $scope.flashError('You were logged out after ' + ALLOWED_INACTIVITY_MINS + ' min of inactivity!');
-                $scope.$apply();
                 $location.path('/login');
+                $scope.$apply();
             })
         };
 
