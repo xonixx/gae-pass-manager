@@ -3,7 +3,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <packaging>war</packaging>
-    <version>0.1</version>
+    <version>1.0</version>
 
     <groupId>info.xonix.gae-pass-manager</groupId>
     <artifactId>gae-pass-manager</artifactId>
@@ -13,22 +13,14 @@
     </prerequisites>
 
     <properties>
-        <app.id>xonixpwd</app.id>
+        <appid><!-- set this by appending -Dappid=your-app-id --></appid>
+        <app.id>${appid}</app.id>
         <app.version>1</app.version>
         <appengine.version>1.9.32</appengine.version>
         <gcloud.plugin.version>2.0.9.74.v20150814</gcloud.plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
     </properties>
-
-    <profiles>
-        <profile>
-            <id>stag</id>
-            <properties>
-                <app.id>xonixpwd-test</app.id>
-            </properties>
-        </profile>
-    </profiles>
 
     <dependencies>
         <!-- Compile/runtime dependencies -->
