@@ -293,7 +293,10 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 $scope.error = 'Password and Confirm Password are not same!'
             } else {
                 Logic.setMasterPassword(pass);
-                Logic.store().$promise.then(proceedToMainScreen);
+                Logic.store().$promise.then(function () {
+                    $scope.flash('Master password was created.');
+                    proceedToMainScreen();
+                });
             }
         };
         $scope.submit = function (action) {
