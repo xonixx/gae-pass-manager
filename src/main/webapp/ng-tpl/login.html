@@ -1,6 +1,6 @@
 <div class="container">
     <h3 class="text-center">{{isNew ? 'Create master password' : 'Login'}}</h3>
-    <form name="passForm" class="form-horizontal" novalidate autocomplete="off">
+    <form ng-submit="submit(action)" name="passForm" class="form-horizontal" novalidate autocomplete="off">
         <div style="height: 0;width: 0;overflow: hidden"><!-- hack against chrome autocomplete -->
             <input type="text" name="fakeusername"/>
             <input type="password" name="fakepassword"/>
@@ -27,12 +27,12 @@
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
-                <button ng-if="!isNew" type="button" class="btn btn-success"
+                <button ng-if="!isNew" type="submit" class="btn btn-success"
                         ng-disabled="!pass"
-                        ng-click="login(pass)">Login</button>
-                <button ng-if="isNew" type="button" class="btn btn-success"
+                        ng-click="$scope.action='login(pass)'">Login</button>
+                <button ng-if="isNew" type="submit" class="btn btn-success"
                         ng-disabled="!pass || !passConfirm"
-                        ng-click="register(pass,passConfirm)">
+                        ng-click="$scope.action='register(pass,passConfirm)'">
                     Register
                 </button>
             </div>

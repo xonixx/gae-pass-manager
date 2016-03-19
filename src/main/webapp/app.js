@@ -263,6 +263,8 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
         }
     }])
     .controller('LoginCtrl', ['$scope', '$location', 'Logic', function ($scope, $location, Logic) {
+        $scope.$scope = $scope;
+        
         function proceedToMainScreen() {
             $scope.flashError(null);
             $scope.startInactivityChecker();
@@ -289,7 +291,10 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 Logic.setMasterPassword(pass);
                 Logic.store().$promise.then(proceedToMainScreen);
             }
-        }
+        };
+        $scope.submit = function (action) {
+            $scope.$eval(action);    
+        };
     }])
     .controller('LogoutCtrl', ['$scope', '$location', 'Logic', function ($scope, $location, Logic) {
         Logic.reset();
