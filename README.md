@@ -23,3 +23,12 @@ master-password-protected HTML page.
 1. Checkout the code.
 1. Run `mvn appengine:update -Dappid=your-app-id`
 1. Start using the app!
+
+## Some Screenshots
+
+![Create master password](/screenshots/0_create_master.png?raw=true)
+![Login with master password](/screenshots/1_login.png?raw=true)
+![Main screen](/screenshots/2_list.png?raw=true)
+![Edit record](/screenshots/3_edit.png?raw=true)
+![Delete record](/screenshots/4_delete.png?raw=true)
+![Change master password](/screenshots/5_change_master.png?raw=true)
