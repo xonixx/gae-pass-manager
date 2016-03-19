@@ -25,10 +25,15 @@ master-password-protected HTML page.
 1. Start using the app!
 
 ## Some Screenshots
-
+#### Create master password
 ![Create master password](/screenshots/0_create_master.png?raw=true)
+#### Login with master password
 ![Login with master password](/screenshots/1_login.png?raw=true)
+#### Main screen
 ![Main screen](/screenshots/2_list.png?raw=true)
+#### Edit record
 ![Edit record](/screenshots/3_edit.png?raw=true)
+#### Delete record
 ![Delete record](/screenshots/4_delete.png?raw=true)
+#### Change master password
 ![Change master password](/screenshots/5_change_master.png?raw=true)
