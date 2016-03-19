@@ -14,6 +14,7 @@ absolutely free of any charge.
     1. You totally manage the whole setup by your own. Source code is open.
 1. Allows to download all passwords data in form of self-contained read-only
 master-password-protected HTML page.
+1. Copy any login/password by single click of a mouse.
 1. Automatically logs you out after 5 minutes of inactivity.
 
 ## Installation
