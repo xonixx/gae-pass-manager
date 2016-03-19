@@ -264,7 +264,11 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
     }])
     .controller('LoginCtrl', ['$scope', '$location', 'Logic', function ($scope, $location, Logic) {
         $scope.$scope = $scope;
-        
+
+        setTimeout(function () {
+            $('#inputPass').focus();
+        }, 100);
+
         function proceedToMainScreen() {
             $scope.flashError(null);
             $scope.startInactivityChecker();
