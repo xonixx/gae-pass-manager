@@ -1,12 +1,12 @@
 package info.xonix.passmanager;
 
-import com.google.appengine.api.datastore.*;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import info.xonix.passmanager.servlets.ApiServlet;
 import org.apache.commons.io.IOUtils;
 
 import javax.servlet.ServletContext;
@@ -14,7 +14,6 @@ import javax.servlet.jsp.PageContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -55,7 +54,7 @@ public class Logic {
         globals.put("email", getCurrentUser().getEmail());
 
         if (offline)
-            globals.put("offlineData", Logic.getEncyptedPassData());
+            globals.put("offlineData", EncLogic.getEncyptedPassData());
 
         return gson.toJson(globals);
     }
@@ -136,31 +135,4 @@ public class Logic {
         return sb.toString();
     }
 
-    public static String getEncyptedPassDataJson() {
-        return gson.toJson(getEncyptedPassData());
-    }
-
-    public static Map<String, Object> getEncyptedPassData() {
-        Map<String, Object> res = new LinkedHashMap<>();
-
-        Entity data = null;
-        try {
-            data = getDatastoreService().get(KeyFactory.createKey(ApiServlet.ENTITY_DATA, ApiServlet.KEY_MASTER_DATA));
-        } catch (EntityNotFoundException e) {
-            log.info("Data not found");
-        }
-
-        if (data != null) {
-            String value = ((Text) data.getProperty(ApiServlet.PROP_VALUE)).getValue();
-            Date timestamp = (Date) data.getProperty(ApiServlet.PROP_TIMESTAMP);
-
-            log.info("Found data of size: " + value.length() + ", lastUpdated: " + timestamp);
-
-            res.put("data", value);
-            res.put("lastUpdated", timestamp);
-        } else {
-            log.info("No data saved yet...");
-        }
-        return res;
-    }
 }
