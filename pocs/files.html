@@ -1,0 +1,32 @@
+<!-- POC to enc-dec files in browser -->
+
+<script src="../src/main/webapp/lib/sjcl/sjcl.js"></script>
+<script src="../src/main/webapp/lib/jquery/jquery-2.2.1.js"></script>
+<script src="../src/main/webapp/lib/angular-1.4.9/angular.js"></script>
+<script src="files.js"></script>
+
+<body ng-app="poc-files" ng-controller="Ctrl">
+
+<label>
+    Select files <input type="file" id="files" multiple>
+</label>
+
+<br>
+
+<button type="button" ng-click="enc()">Enc!</button>
+<p></p>
+
+Src: {{srcData.length}}
+<br>
+<textarea ng-model="srcData" rows="6" style="width: 100%"></textarea>
+
+<p></p>
+
+Encrypted: {{srcDataEnc.length}}
+<br>
+<textarea ng-model="srcDataEnc" rows="6" style="width: 100%"></textarea>
+
+<button type="button" ng-click="dec()">Dec!</button>
+
+</body>
+
