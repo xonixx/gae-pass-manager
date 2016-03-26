@@ -4,6 +4,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Text;
+import info.xonix.passmanager.model.Attachment;
 import info.xonix.passmanager.model.PassData;
 
 import java.util.Date;
@@ -117,12 +118,14 @@ public class AppLogic {
 
     /**
      * @param key file id
-     * @return file content || null if absent
+     * @return file || null if absent
      */
-    public static String loadFile(String key) {
+    public static Attachment loadFile(String key) {
         try {
             Entity file = Logic.getDatastoreService().get(KeyFactory.createKey(ENTITY_FILE, key));
-            return ((Text) file.getProperty(PROP_VALUE)).getValue();
+            return new Attachment(
+                    ((Text) file.getProperty(PROP_VALUE)).getValue(),
+                    (Date) file.getProperty(PROP_TIMESTAMP));
         } catch (EntityNotFoundException e) {
             log.info("File not found for key:" + key);
             return null;
