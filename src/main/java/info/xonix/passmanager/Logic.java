@@ -54,7 +54,7 @@ public class Logic {
         globals.put("email", getCurrentUser().getEmail());
 
         if (offline)
-            globals.put("offlineData", EncLogic.getEncyptedPassData());
+            globals.put("offlineData", AppLogic.getEncyptedPassData());
 
         return gson.toJson(globals);
     }

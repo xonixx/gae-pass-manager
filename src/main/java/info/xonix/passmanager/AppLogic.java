@@ -4,30 +4,31 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Text;
+import info.xonix.passmanager.model.PassData;
 
 import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
-public class EncLogic {
-    private static final Logger log = Logger.getLogger(EncLogic.class.getName());
+/**
+ * User: xonix
+ * Date: 26.03.16
+ * Time: 21:45
+ */
+public class AppLogic {
+    private static final Logger log = Logger.getLogger(AppLogic.class.getName());
 
     public static final int BACKUPS_COUNT = 10;
     public static final String KEY_MASTER_DATA = "0";
+
     public static final String ENTITY_DATA = "Data";
+    public static final String ENTITY_FILE = "File";
     public static final String ENTITY_DATA_BACKUP = "DataBackup";
+
     public static final String PROP_VALUE = "value";
     public static final String PROP_TIMESTAMP = "timestamp";
     public static final String PROP_LAST_BACKUP_KEY = "lastBackupKey";
 
-    public static String getEncyptedPassDataJson() {
-        return Logic.gson.toJson(getEncyptedPassData());
-    }
-
-    public static Map<String, Object> getEncyptedPassData() {
-        Map<String, Object> res = new LinkedHashMap<>();
-
+    public static PassData getEncyptedPassData() {
         Entity data = null;
         try {
             data = Logic.getDatastoreService().get(KeyFactory.createKey(ENTITY_DATA, KEY_MASTER_DATA));
@@ -41,12 +42,11 @@ public class EncLogic {
 
             log.info("Found data of size: " + value.length() + ", lastUpdated: " + timestamp);
 
-            res.put("data", value);
-            res.put("lastUpdated", timestamp);
+            return new PassData(value, timestamp);
         } else {
             log.info("No data saved yet...");
         }
-        return res;
+        return null;
     }
 
     /**
@@ -87,5 +87,45 @@ public class EncLogic {
 
         Logic.getDatastoreService().put(data);
         return lastUpdated;
+    }
+
+    /**
+     * @param key file id
+     * @return file existed or not
+     */
+    public static boolean deleteFile(String key) {
+        Logic.getDatastoreService().delete(KeyFactory.createKey(ENTITY_FILE, key));
+        return true; // TODO seems there is not effective way to check if record existed
+    }
+
+    /**
+     * @param key  file id
+     * @param data encrypted file content
+     * @return file upload date
+     */
+    public static Date saveFile(String key, String data) {
+        Entity fileEntity = new Entity(ENTITY_FILE, key);
+
+        Date uploadDate = new Date();
+
+        fileEntity.setProperty(PROP_TIMESTAMP, uploadDate);
+        fileEntity.setProperty(PROP_VALUE, new Text(data));
+
+        Logic.getDatastoreService().put(fileEntity);
+        return uploadDate;
+    }
+
+    /**
+     * @param key file id
+     * @return file content || null if absent
+     */
+    public static String loadFile(String key) {
+        try {
+            Entity file = Logic.getDatastoreService().get(KeyFactory.createKey(ENTITY_FILE, key));
+            return ((Text) file.getProperty(PROP_VALUE)).getValue();
+        } catch (EntityNotFoundException e) {
+            log.info("File not found for key:" + key);
+            return null;
+        }
     }
 }
