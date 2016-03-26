@@ -1,4 +1,7 @@
 angular.module('poc-files', [])
+    .config(['$compileProvider', function ($compileProvider) {
+        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|data):/);
+    }])
     .controller('Ctrl', ['$scope', function Ctrl($scope) {
         var PASS = 'secret123';
 
@@ -9,6 +12,8 @@ angular.module('poc-files', [])
 
             if (files.length) {
                 var file = files[0];
+                $scope.fileName = file.name;
+
                 var reader = new FileReader();
                 reader.onload = function (e) {
                     var srcData = e.target.result;
@@ -22,7 +27,7 @@ angular.module('poc-files', [])
         };
 
         $scope.dec = function () {
-
+            $scope.fileDecDataUrl = decrypt(PASS, $scope.srcDataEnc);
         }
     }]);
 

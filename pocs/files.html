@@ -28,5 +28,8 @@ Encrypted: {{srcDataEnc.length}}
 
 <button type="button" ng-click="dec()">Dec!</button>
 
+<a ng-if="fileDecDataUrl"
+   download="{{fileName}}" href="{{fileDecDataUrl}}">Download</a>
+
 </body>
 
