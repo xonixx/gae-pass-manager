@@ -427,7 +427,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                         var srcData = e.target.result;
                         var pass = newUid();
                         var dataEnc = encrypt(pass, srcData);
-                        d.resolve({data: dataEnc, key: f.uid, pass: pass});
+                        d.resolve({key: f.uid, name: f.file.name, size: f.file.size, data: dataEnc, pass: pass});
                     };
                     reader.readAsDataURL(f.file);
                     filePromises.push(d.promise);
@@ -443,11 +443,17 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 // TODO handle upload error
                 return $q.all(filePromises).then(function (files) {
                     var filesNoPass = [];
+                    var filesToEmbed = [];
                     for (var i = 0; i < files.length; i++) {
                         var f = files[i];
-                        filesNoPass.push({data: f.data, key: f.key})
+                        filesNoPass.push({data: f.data, key: f.key});
+                        filesToEmbed.push({key: f.key, name: f.name, size: f.size, pass: f.pass});
                     }
-                    return Api.saveFiles({files:filesNoPass}).$promise.then($q.resolve(files));
+                    var d = $q.defer();
+                    Api.saveFiles({files: filesNoPass}, function (res) {
+                        d.resolve(filesToEmbed);
+                    });
+                    return d.promise;
                 });
             }
             $scope.save = function (password) {
