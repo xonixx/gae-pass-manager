@@ -226,8 +226,13 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 $scope.flash(msg);
             }
         };
-        $scope.flashError = function (err) {
+        $scope.flashError = function (err, autohide) {
             $scope.flashErr = err;
+            if (autohide) {
+                $timeout(function () {
+                    delete $scope.flashErr;
+                }, 2000);
+            }
         };
         $scope.toFlashError = function (err) {
             return function () {
@@ -420,8 +425,9 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                     var reader = new FileReader();
                     reader.onload = function (e) {
                         var srcData = e.target.result;
-                        var dataEnc = encrypt(f.pass, srcData);
-                        d.resolve({data: dataEnc, key: f.uid});
+                        var pass = newUid();
+                        var dataEnc = encrypt(pass, srcData);
+                        d.resolve({data: dataEnc, key: f.uid, pass: pass});
                     };
                     reader.readAsDataURL(f.file);
                     filePromises.push(d.promise);
@@ -434,8 +440,14 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 if (!filePromises.length)
                     return $q.resolve();
 
+                // TODO handle upload error
                 return $q.all(filePromises).then(function (files) {
-                    return Api.saveFiles({files:files});
+                    var filesNoPass = [];
+                    for (var i = 0; i < files.length; i++) {
+                        var f = files[i];
+                        filesNoPass.push({data: f.data, key: f.key})
+                    }
+                    return Api.saveFiles({files:filesNoPass}).$promise.then($q.resolve(files));
                 });
             }
             $scope.save = function (password) {
@@ -443,7 +455,8 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 for (var i = 0; i < $scope.tags.length; i++) {
                     password.tags.push($scope.tags[i].text);
                 }
-                saveAllFiles().then(function() {
+                saveAllFiles().then(function(files) {
+                    password.files = files;
                     Logic.addOrUpdate(password).$promise.then($scope.toFlash('Password saved.'));
                 });
                 $scope.cancel();// TODO: error reporting
@@ -452,12 +465,17 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 return tagsToObjArr(Logic.listTags(q));
             };
             $scope.newFiles = [{uid:newUid()}];
-            $scope.newFileChanged = function (f, files, isLast) {
+            $scope.newFileChanged = function (f, files, e, isLast) {
                 var newF = files[0];
                 if (!newF)
                     return;
+                if (newF.size > 500 * 1024) {
+                    $scope.flashError('File is more then 500 Kb!', true);
+                    $(e.target).val('');
+                    return;
+                }
+
                 f.file = newF;
-                f.pass = newUid();
                 if (isLast)
                     $scope.newFiles.push({uid:newUid()});
             };
