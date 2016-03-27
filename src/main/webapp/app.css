@@ -52,3 +52,7 @@
     background-color: #ddd;
     color: #ddd;
 }
+
+.btn-edit-del {
+    width: 60px;
+}

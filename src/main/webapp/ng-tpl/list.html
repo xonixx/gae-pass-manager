@@ -22,7 +22,7 @@
     </div>
     <div class="row">
         <div class="col-xs-12">
-            <input type="text" id="search-box" ng-model="searchStr" placeholder="Filter..."/>
+            <input type="text" id="search-box" class="form-control" ng-model="searchStr" placeholder="Filter..."/>
         </div>
     </div>
     <div ng-repeat="p in (filterPasswords(passwords,searchStr) | orderBy:'updated||created||1':true) track by p.uid" class="pass-block row">
@@ -35,8 +35,8 @@
             <div class="row">
                 <div class="col-xs-6"><span ng-repeat="t in p.tags" class="tag">{{t}}</span></div>
                 <div class="col-xs-6">
-                    <a class="btn btn-success btn-xs" href="#/edit/{{p.uid}}">{{readonly ? 'View' : 'Edit'}}</a>
-                    <button type="button" class="btn btn-warning btn-xs"
+                    <a class="btn btn-success btn-xs btn-edit-del" href="#/edit/{{p.uid}}">{{readonly ? 'View' : 'Edit'}}</a>
+                    <button type="button" class="btn btn-warning btn-xs btn-edit-del"
                             ng-if="!readonly"
                             data-toggle="modal"
                             data-target="#confirmDeleteModal"
