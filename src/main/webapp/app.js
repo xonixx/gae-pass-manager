@@ -416,7 +416,6 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 function addFilePromise(f) {
                     if (!f.file)
                         return;
-                    console.info(111,f)
                     var d = $q.defer();
                     var reader = new FileReader();
                     reader.onload = function (e) {
@@ -435,9 +434,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 if (!filePromises.length)
                     return $q.resolve();
 
-                console.info(222,filePromises.length)
                 return $q.all(filePromises).then(function (files) {
-                    console.info(333,files)
                     return Api.saveFiles({files:files});
                 });
             }
@@ -460,7 +457,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 if (!newF)
                     return;
                 f.file = newF;
-                f.pass = newUid();// TODO: should we make it stronger
+                f.pass = newUid();
                 if (isLast)
                     $scope.newFiles.push({uid:newUid()});
             };
@@ -469,8 +466,17 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             }
         }]);
 
+function uuid() {
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
+}
 function newUid() {
-    return '' + new Date().getTime() + '-' + Math.floor(Math.random() * 1e10);
+    return '' + new Date().getTime() + '-' + uuid().replace(/-/g, '');
 }
 function tagsToObjArr(tags) {
     var res = [];
