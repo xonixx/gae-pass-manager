@@ -22,6 +22,7 @@ public abstract class JsonReply {
         try {
             jsonReply.fillJson(res);
         } catch (Throwable t) {
+            t.printStackTrace();
             res.put("success", false);
             res.put("error", t.toString());
         }

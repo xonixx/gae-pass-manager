@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,7 +29,7 @@ public class ApiServlet extends HttpServlet {
     public static final String ACTION_SAVE = "save";
 
     public static final String ACTION_LOAD_FILE = "loadFile";
-    public static final String ACTION_SAVE_FILE = "saveFile";
+    public static final String ACTION_SAVE_FILES = "saveFiles";
     public static final String ACTION_DELETE_FILE = "deleteFile";
 
     public static final String PARAM_KEY = "key";
@@ -66,11 +67,14 @@ public class ApiServlet extends HttpServlet {
                     Date lastUpdated = AppLogic.storeEncryptedPassData((String) json.get(PARAM_DATA));
 
                     result.put("lastUpdated", lastUpdated);
-                } else if (ACTION_SAVE_FILE.equals(action)) {
-                    String key = (String) json.get(PARAM_KEY);
-                    String data = (String) json.get(PARAM_DATA);
-                    Date uploaded = AppLogic.saveFile(key, data);
-
+                } else if (ACTION_SAVE_FILES.equals(action)) {
+                    List<Map> files = (List<Map>) json.get("files");
+                    Date uploaded = null;
+                    for (Map file : files) {
+                        String key = (String) file.get(PARAM_KEY);
+                        String data = (String) file.get(PARAM_DATA);
+                        uploaded = AppLogic.saveFile(key, data);
+                    }
                     result.put("uploaded", uploaded);
                 } else if (ACTION_DELETE_FILE.equals(action)) {
                     String key = (String) json.get(PARAM_KEY);

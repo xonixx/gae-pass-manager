@@ -85,7 +85,10 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
     .factory('Api', ['$resource', function ($resource) {
         return $resource('api?action=:action', {}, {
             loadData: {method: 'GET', params: {action: 'load'}},
-            saveData: {method: 'POST', params: {action: 'save'}}
+            saveData: {method: 'POST', params: {action: 'save'}},
+            saveFiles: {method: 'POST', params: {action: 'saveFiles'}},
+            deleteFile: {method: 'POST', params: {action: 'deleteFile'}},
+            loadFile: {method: 'GET', params: {action: 'loadFile'}}
         });
     }])
     .factory('Logic', ['Api', '$rootScope', '$q', function (Api, $rootScope, $q) {
@@ -391,8 +394,8 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             $scope.passToDel = p;
         };
     }])
-    .controller('AddCtrl', ['$scope', '$location', '$routeParams', 'Logic',
-        function AddCtrl($scope, $location, $routeParams, Logic) {
+    .controller('AddCtrl', ['$scope', '$location', '$routeParams', '$q','Logic', 'Api',
+        function AddCtrl($scope, $location, $routeParams, $q, Logic, Api) {
             if (Logic.isNew()) {
                 $location.path('/login');
                 return;
@@ -407,12 +410,45 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             $scope.cancel = function () {
                 $location.path('/list');
             };
+            function saveAllFiles() {
+                var filePromises = [];
+
+                function addFilePromise(f) {
+                    if (!f.file)
+                        return;
+                    console.info(111,f)
+                    var d = $q.defer();
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        var srcData = e.target.result;
+                        var dataEnc = encrypt(f.pass, srcData);
+                        d.resolve({data: dataEnc, key: f.uid});
+                    };
+                    reader.readAsDataURL(f.file);
+                    filePromises.push(d.promise);
+                }
+
+                for (var i = 0; i < $scope.newFiles.length; i++) {
+                    addFilePromise($scope.newFiles[i])
+                }
+
+                if (!filePromises.length)
+                    return $q.resolve();
+
+                console.info(222,filePromises.length)
+                return $q.all(filePromises).then(function (files) {
+                    console.info(333,files)
+                    return Api.saveFiles({files:files});
+                });
+            }
             $scope.save = function (password) {
                 password.tags = [];
                 for (var i = 0; i < $scope.tags.length; i++) {
                     password.tags.push($scope.tags[i].text);
                 }
-                Logic.addOrUpdate(password).$promise.then($scope.toFlash('Password saved.'));
+                saveAllFiles().then(function() {
+                    Logic.addOrUpdate(password).$promise.then($scope.toFlash('Password saved.'));
+                });
                 $scope.cancel();// TODO: error reporting
             };
             $scope.loadTags = function (q) {
@@ -424,6 +460,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 if (!newF)
                     return;
                 f.file = newF;
+                f.pass = newUid();// TODO: should we make it stronger
                 if (isLast)
                     $scope.newFiles.push({uid:newUid()});
             };

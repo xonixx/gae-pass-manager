@@ -113,6 +113,8 @@ public class AppLogic {
         fileEntity.setProperty(PROP_VALUE, new Text(data));
 
         Logic.getDatastoreService().put(fileEntity);
+
+        log.info("Uploaded file key=" + key + ", size=" + data.length());
         return uploadDate;
     }
 
