@@ -41,11 +41,11 @@
         {{newFiles}}
         <div class="form-group" ng-repeat="f in newFiles track by f.uid">
             <label for="inputFiles-{{f.uid}}" class="col-sm-2 control-label">{{$index==0 ? 'Files' : ''}}</label>
-            <div class="col-sm-9" style="padding-right: 0">
+            <div class="col-sm-{{f.file ? 9 : 10}}">
                 <input type="file" class="form-control" id="inputFiles-{{f.uid}}" file-change="newFileChanged(f, files, $last)">
             </div>
-            <div class="col-sm-1">
-                <button ng-if="f.file" ng-click="rmNewFile($index)"
+            <div class="col-sm-1" ng-if="f.file" style="padding-left: 0">
+                <button ng-click="rmNewFile($index)"
                         type="button" class="btn btn-warning" style="width: 100%">
                     <span class="glyphicon glyphicon-remove"></span></button>
             </div>

@@ -417,14 +417,12 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             };
             $scope.loadTags = function (q) {
                 return tagsToObjArr(Logic.listTags(q));
-            }
+            };
             $scope.newFiles = [{uid:newUid()}];
             $scope.newFileChanged = function (f, files, isLast) {
                 var newF = files[0];
                 if (!newF)
                     return;
-                f.name = newF.name;
-                f.size = newF.size;
                 f.file = newF;
                 if (isLast)
                     $scope.newFiles.push({uid:newUid()});
