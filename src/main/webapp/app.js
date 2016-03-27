@@ -61,6 +61,20 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             })
         }
     }])
+    .directive('fileChange', ['$parse', function($parse) {
+        return {
+            restrict: 'A',
+            link: function ($scope, element, attrs) {
+                var attrHandler = $parse(attrs['fileChange']);
+                var handler = function (e) {
+                    $scope.$apply(function () {
+                        attrHandler($scope, { $event: e, files: e.target.files });
+                    });
+                };
+                element[0].addEventListener('change', handler, false);
+            }
+        };
+    }])
     .filter('date1', ['$filter', function ($filter) {
         var dateF = $filter('date');
         return function (input) {
@@ -300,7 +314,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             }
         };
         $scope.submit = function (action) {
-            $scope.$eval(action);    
+            $scope.$eval(action);
         };
     }])
     .controller('LogoutCtrl', ['$scope', '$location', 'Logic', function ($scope, $location, Logic) {
@@ -403,6 +417,20 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             };
             $scope.loadTags = function (q) {
                 return tagsToObjArr(Logic.listTags(q));
+            }
+            $scope.newFiles = [{uid:newUid()}];
+            $scope.newFileChanged = function (f, files, isLast) {
+                var newF = files[0];
+                if (!newF)
+                    return;
+                f.name = newF.name;
+                f.size = newF.size;
+                f.file = newF;
+                if (isLast)
+                    $scope.newFiles.push({uid:newUid()});
+            };
+            $scope.rmNewFile = function (i) {
+                $scope.newFiles.splice(i, 1);
             }
         }]);
 
