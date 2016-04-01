@@ -31,6 +31,7 @@
                 <a href="{{p.url}}" target="_blank" title="URL">{{p.url}}</a>
                 <span class="login" ng-if="p.login" title="Login">{{p.login}}</span>
                 <span class="descr" ng-if="p.descr" title="Description">{{p.descr}}</span>
+                <span class="files" ng-if="p.files.length">Files: {{p.files.length}}</span>
             </div>
             <div class="row">
                 <div class="col-xs-6"><span ng-repeat="t in p.tags" class="tag">{{t}}</span></div>
