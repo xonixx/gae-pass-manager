@@ -85,6 +85,11 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             return dateF(input, 'd MMM yyyy HH:mm');
         }
     }])
+    .filter('to_trusted', ['$sce', function($sce){
+        return function(text) {
+            return $sce.trustAsHtml(text);
+        };
+    }])
     .factory('Api', ['$resource', function ($resource) {
         return $resource('api?action=:action', {}, {
             loadData: {method: 'GET', params: {action: 'load'}},
@@ -243,6 +248,23 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 $scope.flashError(err);
             }
         };
+        
+        $scope.confirmDelete = function (text, proceedFunc) {
+            $('#confirmDeleteModal').modal('show');
+            delete $scope.deleteConfirm2;
+            $scope.deleteObj = {
+                text: text,
+                proceedFunc: proceedFunc,
+                doConfirmDelete: function () {
+                    proceedFunc();
+                    this.cancel();
+                },
+                cancel: function () {
+                    delete $scope.deleteObj;
+                    $('#confirmDeleteModal').modal('hide');
+                }
+            };
+        };
         function inactivityChecker(allowedInactivitySec, callback) {
             var idleSecs = 0;
 
@@ -392,14 +414,14 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             return res;
         };
         $scope.delete = function (password) {
-            Logic.remove(password).$promise.then(function () {
-                $scope.flash('Password deleted.');
-                $('#confirmDeleteModal').modal('hide');
-                delete $scope.passToDel;
-            });
+            var passName = password.url || password.login;
+            var confirmTxt = 'Are you sure to delete password' +
+                (passName ? ' for <b>' + passName + '</b>' : '') + '?';
+            $scope.confirmDelete(confirmTxt, function () {
+                Logic.remove(password).$promise.then($scope.toFlash('Password deleted.'));
+            })
         };
         $scope.preDelete = function (p) {
-            delete $scope.deleteConfirm2;
             $scope.passToDel = p;
         };
     }])

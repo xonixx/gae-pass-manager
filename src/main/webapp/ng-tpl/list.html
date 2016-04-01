@@ -38,9 +38,7 @@
                     <a class="btn btn-success btn-xs btn-edit-del" href="#/edit/{{p.uid}}">{{readonly ? 'View' : 'Edit'}}</a>
                     <button type="button" class="btn btn-warning btn-xs btn-edit-del"
                             ng-if="!readonly"
-                            data-toggle="modal"
-                            data-target="#confirmDeleteModal"
-                            ng-click="preDelete(p)">Delete</button>
+                            ng-click="delete(p)">Delete</button>
                 </div>
             </div>
         </div>

@@ -47,7 +47,7 @@
     </div>
     <ng-view></ng-view>
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" ng-if="passToDel">
+    <div class="modal-dialog" ng-if="deleteObj">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -58,9 +58,7 @@
                     <div class="col-xs-2" style="font-size: 4em; color: #f40">
                         <span class="glyphicon glyphicon-exclamation-sign"></span></div>
                     <div class="col-xs-10">
-                        <p style="font-size: 1.8em;">
-                            Are you sure to delete password<span ng-if="passToDel.url || passToDel.login">
-                                for <b>{{passToDel.url || passToDel.login}}</b></span>?</p>
+                        <p style="font-size: 1.8em;" ng-bind-html="deleteObj.text | to_trusted"></p>
                         <p style="font-size: 2em; color: #f40">
                             {{deleteConfirm2 ? 'Are you REALLY sure?' : '&nbsp;'}}
                         </p>
@@ -70,13 +68,14 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" style="float: left"
                         ng-if="deleteConfirm2"
-                        ng-click="delete(passToDel)">
+                        ng-click="deleteObj.doConfirmDelete()">
                     Yes, delete it!
                 </button>
                 <button type="button" class="btn btn-primary"
                         ng-if="!deleteConfirm2"
                         ng-click="$scope.deleteConfirm2=1">Delete!</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-default"
+                        ng-click="deleteObj.cancel()">Cancel</button>
             </div>
         </div>
     </div>
