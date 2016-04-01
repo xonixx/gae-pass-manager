@@ -214,6 +214,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
         }
     }])
     .controller('RootCtrl', ['$scope', '$location', '$timeout', 'Logic', function ($scope, $location, $timeout, Logic) {
+        $scope.$scope = $scope;
         $scope.global = window.global;
         $scope.readonly = !!window.global.offlineData;
 
