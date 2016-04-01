@@ -30,9 +30,10 @@ public class ApiServlet extends HttpServlet {
 
     public static final String ACTION_LOAD_FILE = "loadFile";
     public static final String ACTION_SAVE_FILES = "saveFiles";
-    public static final String ACTION_DELETE_FILE = "deleteFile";
+    public static final String ACTION_DELETE_FILES = "deleteFiles";
 
     public static final String PARAM_KEY = "key";
+    public static final String PARAM_KEYS = "keys";
     public static final String PARAM_DATA = "data";
 
     @Override
@@ -76,9 +77,11 @@ public class ApiServlet extends HttpServlet {
                         uploaded = AppLogic.saveFile(key, data);
                     }
                     result.put("uploaded", uploaded);
-                } else if (ACTION_DELETE_FILE.equals(action)) {
-                    String key = (String) json.get(PARAM_KEY);
-                    AppLogic.deleteFile(key);
+                } else if (ACTION_DELETE_FILES.equals(action)) {
+                    List<String> keys = (List<String>) json.get(PARAM_KEYS);
+                    for (String key : keys) {
+                        AppLogic.deleteFile(key);
+                    }
                 }
             }
         });

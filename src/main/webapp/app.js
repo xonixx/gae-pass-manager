@@ -90,7 +90,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             loadData: {method: 'GET', params: {action: 'load'}},
             saveData: {method: 'POST', params: {action: 'save'}},
             saveFiles: {method: 'POST', params: {action: 'saveFiles'}},
-            deleteFile: {method: 'POST', params: {action: 'deleteFile'}},
+            deleteFiles: {method: 'POST', params: {action: 'deleteFiles'}},
             loadFile: {method: 'GET', params: {action: 'loadFile'}}
         });
     }])
@@ -441,7 +441,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 }
 
                 if (!filePromises.length)
-                    return $q.resolve();
+                    return $q.resolve([]);
 
                 // TODO handle upload error
                 return $q.all(filePromises).then(function (files) {
@@ -464,11 +464,31 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 for (var i = 0; i < $scope.tags.length; i++) {
                     password.tags.push($scope.tags[i].text);
                 }
-                saveAllFiles().then(function(files) {
-                    password.files = files;
-                    Logic.addOrUpdate(password).$promise.then($scope.toFlash('Password saved.'));
+                var deleteFileKeys = [];
+                for (var key in $scope.deletedFiles) {
+                    if ($scope.deletedFiles[key])
+                        deleteFileKeys.push(key);
+                }
+                Api.deleteFiles({keys:deleteFileKeys}, function (res) {
+                    saveAllFiles().then(function(files) {
+                        if (!password.files)
+                            password.files = [];
+                        var filesWoDeleted = [];
+                        for (var i = 0; i < password.files.length; i++) {
+                            var f = password.files[i];
+                            if (!$scope.deletedFiles[f.key])
+                                filesWoDeleted.push(f);
+                        }
+                        password.files = filesWoDeleted;
+                        for (i = 0; i < files.length; i++) {
+                            password.files.push(files[i]);
+                        }
+                        Logic.addOrUpdate(password).$promise.then(function() {
+                            $scope.flash('Password saved.');
+                            $scope.cancel();// TODO: error reporting
+                        });
+                    });
                 });
-                $scope.cancel();// TODO: error reporting
             };
             $scope.loadTags = function (q) {
                 return tagsToObjArr(Logic.listTags(q));
@@ -482,6 +502,10 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                     a.download = file.name;
                     a.click();
                 });
+            };
+            $scope.deletedFiles = {};
+            $scope.rmFile = function (f, del) {
+                $scope.deletedFiles[f.key] = del ? f : null;    
             };
             $scope.newFiles = [{uid:newUid()}];
             $scope.newFileChanged = function (f, files, e, isLast) {

@@ -60,3 +60,7 @@
 .files-tbl td {
     padding: 5px;
 }
+
+.files-tbl .deleted .t {
+    text-decoration: line-through;
+}
