@@ -56,3 +56,7 @@
 .btn-edit-del {
     width: 60px;
 }
+
+.files-tbl td {
+    padding: 5px;
+}

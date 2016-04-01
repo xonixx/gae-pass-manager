@@ -9,6 +9,9 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             .when('/edit/:uid', {templateUrl: '/ng-tpl/add.html', controller: 'AddCtrl'})
             .otherwise({redirectTo: '/login'});
     }])
+    .config(['$compileProvider', function ($compileProvider) {
+        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|data):/);
+    }])
     .directive('pass', [function () {
         return function (scope, elem, attrs) {
             elem.on('focus', function () {
@@ -469,6 +472,16 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             };
             $scope.loadTags = function (q) {
                 return tagsToObjArr(Logic.listTags(q));
+            };
+            $scope.dl = function (file) {
+                Api.loadFile({key:file.key}, function (res) {
+                    var dataEnc = res.data;
+                    var data = decrypt(file.pass, dataEnc);
+                    var a = document.createElement('a');
+                    a.href = data;
+                    a.download = file.name;
+                    a.click();
+                });
             };
             $scope.newFiles = [{uid:newUid()}];
             $scope.newFileChanged = function (f, files, e, isLast) {

@@ -34,7 +34,14 @@
         <div class="form-group" ng-if="password.files">
             <label class="col-sm-2 control-label">Files</label>
             <div class="col-sm-10">
-                {{password.files}}
+                <!--{{password.files}}-->
+                <table class="files-tbl">
+                    <tr ng-repeat="f in password.files track by f.key">
+                        <td><a style="cursor: pointer" ng-click="dl(f)">{{f.name}}</a></td>
+                        <td>{{f.size}}</td>
+                        <td><button type="button" class="btn btn-warning btn-xs"><span class="glyphicon glyphicon-remove"></span></button></td>
+                    </tr>
+                </table>
             </div>
         </div>
         <div class="form-group" ng-repeat="f in newFiles track by f.uid">
