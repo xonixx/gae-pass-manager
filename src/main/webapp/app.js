@@ -569,6 +569,10 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 return tagsToObjArr(Logic.listTags(q));
             };
             $scope.dl = function (file) {
+                if ($scope.readonly) {
+                    $scope.flashError('Please use online version to download the file!', true);
+                    return;
+                }
                 Api.loadFile({key: file.key}, function (res) {
                     var dataEnc = res.data;
                     var data = decrypt(file.pass, dataEnc);

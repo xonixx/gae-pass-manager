@@ -39,7 +39,7 @@
                     <tr ng-repeat="f in password.files track by f.key" ng-class="{deleted:deletedFiles[f.key]}">
                         <td class="t"><a style="cursor: pointer" ng-click="dl(f)">{{f.name}}</a></td>
                         <td class="t">{{f.size | bytes}}</td>
-                        <td>
+                        <td ng-if="!readonly">
                             <button ng-click="rmFile(f,1)" ng-if="!deletedFiles[f.key]"
                                     type="button" class="btn btn-warning btn-xs">
                                 <span class="glyphicon glyphicon-remove"></span></button>
