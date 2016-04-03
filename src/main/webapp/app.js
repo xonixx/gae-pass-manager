@@ -575,7 +575,9 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                     var a = document.createElement('a');
                     a.href = data;
                     a.download = file.name;
+                    document.body.appendChild(a);
                     a.click();
+                    document.body.removeChild(a);
                 });
             };
             $scope.deletedFiles = {};
