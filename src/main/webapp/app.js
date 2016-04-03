@@ -506,7 +506,6 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 if (!filePromises.length)
                     return $q.resolve([]);
 
-                // TODO handle upload error
                 return $q.all(filePromises).then(function (files) {
                     var filesNoPass = [];
                     var filesToEmbed = [];
@@ -545,7 +544,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                             .then(function () {
                                 return Api.deleteFiles({keys: deleteFileKeys}).$promise;
                             });
-                    }, function (res) {
+                    }, function () {
                         saveAllFiles().then(function (files) {
                             if (!password.files)
                                 password.files = [];
@@ -561,7 +560,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                             }
                             Logic.addOrUpdate(password).$promise.then(function () {
                                 $scope.flash('Password saved.');
-                                $scope.cancel();// TODO: error reporting
+                                $scope.cancel();
                             });
                         });
                     });

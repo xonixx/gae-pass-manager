@@ -8,7 +8,6 @@ angular.module('poc-files', [])
         $scope.enc = function () {
             var files = $('#files')[0].files;
             console.info(111,files)
-            // TODO file size check
 
             if (files.length) {
                 var file = files[0];
