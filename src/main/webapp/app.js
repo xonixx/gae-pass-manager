@@ -10,7 +10,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             .otherwise({redirectTo: '/login'});
     }])
     .config(['$compileProvider', function ($compileProvider) {
-        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|data):/);
+        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|data|file):/);
     }])
     .factory('errorInterceptor', ['$q', '$rootScope', function ($q, $rootScope) {
         return {

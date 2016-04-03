@@ -76,14 +76,14 @@ public class Logic {
             if (line.endsWith(".js")) {
                 if (offline) {
                     res.append("<script>/* src:").append(line).append(" */\n")
-                            .append(getStringContent(servletContext, line))
+                            .append(getStringContent(servletContext, line, true))
                             .append("\n</script>\n");
                 } else
                     res.append("<script src=\"").append(line).append("\"></script>\n");
             } else if (line.endsWith(".css")) {
                 if (offline) {
                     res.append("<style>/* src:").append(line).append(" */\n")
-                            .append(getStringContent(servletContext, line))
+                            .append(getStringContent(servletContext, line, false))
                             .append("\n</style>\n");
                 } else
                     res.append("<link rel=\"stylesheet\" href=\"").append(line).append("\"/>\n");
@@ -97,13 +97,18 @@ public class Logic {
     /**
      * TODO: use data URI?
      */
-    private static String getStringContent(ServletContext servletContext, String path) {
+    private static String getStringContent(ServletContext servletContext, String path, boolean isJs) {
         if (!path.startsWith("/"))
             path = "/" + path;
 
         String str = pathToString(servletContext, path);
-        str = str.replaceAll("</script>", "");
-        str = str.replaceAll("</style>", "");
+        if (isJs) {
+            str = str.replaceAll("</script>|</style>", "");
+        } else { // css
+            if (path.contains("bootstrap.")) {
+                str = str.replace("url('../", "url('https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/");
+            }
+        }
         return str;
     }
 
