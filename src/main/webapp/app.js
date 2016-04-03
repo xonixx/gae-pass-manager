@@ -64,14 +64,14 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             })
         }
     }])
-    .directive('fileChange', ['$parse', function($parse) {
+    .directive('fileChange', ['$parse', function ($parse) {
         return {
             restrict: 'A',
             link: function ($scope, element, attrs) {
                 var attrHandler = $parse(attrs['fileChange']);
                 var handler = function (e) {
                     $scope.$apply(function () {
-                        attrHandler($scope, { $event: e, files: e.target.files });
+                        attrHandler($scope, {$event: e, files: e.target.files});
                     });
                 };
                 element[0].addEventListener('change', handler, false);
@@ -85,17 +85,17 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             return dateF(input, 'd MMM yyyy HH:mm');
         }
     }])
-    .filter('bytes', function() {
-        return function(bytes, precision) {
+    .filter('bytes', function () {
+        return function (bytes, precision) {
             if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) return '-';
             if (typeof precision === 'undefined') precision = 1;
             var units = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB'],
                 number = Math.floor(Math.log(bytes) / Math.log(1024));
-            return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) +  ' ' + units[number];
+            return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) + ' ' + units[number];
         }
     })
-    .filter('to_trusted', ['$sce', function($sce){
-        return function(text) {
+    .filter('to_trusted', ['$sce', function ($sce) {
+        return function (text) {
             return $sce.trustAsHtml(text);
         };
     }])
@@ -112,7 +112,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
         var offlineData = window.global.offlineData;
 
         // restore on F5
-        $(window).on('beforeunload', function() {
+        $(window).on('beforeunload', function () {
             window.name = pf.masterPassword;
         });
         var restoredMasterPass = window.name || null;
@@ -140,7 +140,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                     $rootScope.lastUpdated = res.lastUpdated;
                 };
                 if (offlineData) {
-                    return { $promise: $q.when(offlineData, postLoad) };
+                    return {$promise: $q.when(offlineData, postLoad)};
                 } else
                     return Api.loadData(postLoad);
             },
@@ -227,7 +227,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             }
         }
     }])
-    .controller('RootCtrl', ['$scope', '$location', '$timeout', 'Logic', function ($scope, $location, $timeout, Logic) {
+    .controller('RootCtrl', ['$scope', '$q', '$location', '$timeout', 'Logic', function ($scope, $q, $location, $timeout, Logic) {
         $scope.$scope = $scope;
         $scope.global = window.global;
         $scope.readonly = !!window.global.offlineData;
@@ -257,22 +257,26 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 $scope.flashError(err);
             }
         };
-        
+
         $scope.confirmDelete = function (text, proceedFunc) {
+            var d = $q.defer();
             $('#confirmDeleteModal').modal('show');
             delete $scope.deleteConfirm2;
             $scope.deleteObj = {
                 text: text,
-                proceedFunc: proceedFunc,
                 doConfirmDelete: function () {
-                    proceedFunc();
+                    d.resolve(true);
+                    if (proceedFunc)
+                        proceedFunc();
                     this.cancel();
                 },
                 cancel: function () {
+                    d.reject('Cancel');
                     delete $scope.deleteObj;
                     $('#confirmDeleteModal').modal('hide');
                 }
             };
+            return d.promise;
         };
         function inactivityChecker(allowedInactivitySec, callback) {
             var idleSecs = 0;
@@ -388,7 +392,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 $location.path('/list');
             });
         };
-        $scope.cancel = function() {
+        $scope.cancel = function () {
             $location.path('/list');
         }
     }])
@@ -411,7 +415,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 var satisfies = true;
                 for (var j = 0; j < parts.length; j++) {
                     var filterPart = parts[j];
-                    var pStr = [p.url, p.login, p.descr, (p.tags||[]).join(' ')].join(' ').toLowerCase();
+                    var pStr = [p.url, p.login, p.descr, (p.tags || []).join(' ')].join(' ').toLowerCase();
                     if (pStr.indexOf(filterPart) < 0) {
                         satisfies = false;
                         break;
@@ -426,26 +430,27 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             var passName = password.url || password.login;
             var confirmTxt = 'Are you sure to delete password' +
                 (passName ? ' for <b>' + passName + '</b>' : '') + '?';
-            
-            $scope.confirmDelete(confirmTxt, function () {
-                function _delPass() {
-                    Logic.remove(password).$promise.then($scope.toFlash('Password deleted.'));
-                }
 
-                if (password.files && password.files.length) {
-                    var deleteFileKeys = [];
-                    for (var i = 0; i < password.files.length; i++) {
-                        deleteFileKeys.push(password.files[i].key);
-                    }
-                    Api.deleteFiles({keys: deleteFileKeys}, _delPass);
-                } else _delPass();
+            $scope.confirmDelete(confirmTxt, function () {
+                doFirstThenSecond(
+                    password.files && password.files.length,
+                    function () {
+                        var deleteFileKeys = [];
+                        for (var i = 0; i < password.files.length; i++) {
+                            deleteFileKeys.push(password.files[i].key);
+                        }
+                        return Api.deleteFiles({keys: deleteFileKeys});
+                    },
+                    function () {
+                        Logic.remove(password).$promise.then($scope.toFlash('Password deleted.'));
+                    })
             })
         };
         $scope.preDelete = function (p) {
             $scope.passToDel = p;
         };
     }])
-    .controller('AddCtrl', ['$scope', '$location', '$routeParams', '$q','Logic', 'Api',
+    .controller('AddCtrl', ['$scope', '$location', '$routeParams', '$q', 'Logic', 'Api',
         function AddCtrl($scope, $location, $routeParams, $q, Logic, Api) {
             if (Logic.isNew()) {
                 $location.path('/login');
@@ -518,12 +523,14 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                     }
                 }
 
-                if (deleteFileNames.length) {
-                    $scope.confirmDelete('Are you sure to delete next file(s): <b>' + deleteFileNames.join(', ') + '</b>?', doSave);
-                } else doSave();
-
-                function doSave() {
-                    Api.deleteFiles({keys: deleteFileKeys}, function (res) {
+                doFirstThenSecond(
+                    deleteFileNames.length,
+                    function () {
+                        return $scope.confirmDelete('Are you sure to delete next file(s): <b>' + deleteFileNames.join(', ') + '</b>?')
+                            .then(function () {
+                                return Api.deleteFiles({keys: deleteFileKeys}).$promise;
+                            });
+                    }, function (res) {
                         saveAllFiles().then(function (files) {
                             if (!password.files)
                                 password.files = [];
@@ -543,13 +550,12 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                             });
                         });
                     });
-                }
             };
             $scope.loadTags = function (q) {
                 return tagsToObjArr(Logic.listTags(q));
             };
             $scope.dl = function (file) {
-                Api.loadFile({key:file.key}, function (res) {
+                Api.loadFile({key: file.key}, function (res) {
                     var dataEnc = res.data;
                     var data = decrypt(file.pass, dataEnc);
                     var a = document.createElement('a');
@@ -560,9 +566,9 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             };
             $scope.deletedFiles = {};
             $scope.rmFile = function (f, del) {
-                $scope.deletedFiles[f.key] = del ? f : null;    
+                $scope.deletedFiles[f.key] = del ? f : null;
             };
-            $scope.newFiles = [{uid:newUid()}];
+            $scope.newFiles = [{uid: newUid()}];
             $scope.newFileChanged = function (f, files, e, isLast) {
                 var newF = files[0];
                 if (!newF)
@@ -575,7 +581,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
 
                 f.file = newF;
                 if (isLast)
-                    $scope.newFiles.push({uid:newUid()});
+                    $scope.newFiles.push({uid: newUid()});
             };
             $scope.rmNewFile = function (i) {
                 $scope.newFiles.splice(i, 1);
@@ -588,6 +594,7 @@ function uuid() {
             .toString(16)
             .substring(1);
     }
+
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
         s4() + '-' + s4() + s4() + s4();
 }
@@ -603,7 +610,14 @@ function tagsToObjArr(tags) {
     }
     return res;
 }
-
+function doFirstThenSecond(firstCondition, firstAction, secondAction) {
+    if (firstCondition) {
+        var res = firstAction();
+        var p = res.$promise || res;
+        if (p.then)
+            p.then(secondAction);
+    } else secondAction();
+}
 function encrypt(password, text) {
     // aes-256
     return sjcl.encrypt(password, text, {ks: 256})
