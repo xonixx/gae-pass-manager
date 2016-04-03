@@ -12,6 +12,18 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
     .config(['$compileProvider', function ($compileProvider) {
         $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|data):/);
     }])
+    .factory('errorInterceptor', ['$q', '$rootScope', function ($q, $rootScope) {
+        return {
+            responseError: function (rejection) {
+                var err = rejection.data ? rejection.data.error : null;
+                $rootScope.$broadcast('serverError', '' + rejection.status + ' ' + rejection.statusText + (err ? ': ' + err : '' ));
+                return $q.reject(rejection);
+            }
+        }
+    }])
+    .config(['$httpProvider', function ($httpProvider) {
+        $httpProvider.interceptors.push('errorInterceptor');
+    }])
     .directive('pass', [function () {
         return function (scope, elem, attrs) {
             elem.on('focus', function () {
@@ -258,6 +270,9 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             }
         };
 
+        $scope.$on('serverError', function (e, msg) {
+            $scope.flashError(msg);
+        });
         $scope.confirmDelete = function (text, proceedFunc) {
             var d = $q.defer();
             $('#confirmDeleteModal').modal('show');
