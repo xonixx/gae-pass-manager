@@ -392,7 +392,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             $location.path('/list');
         }
     }])
-    .controller('ListCtrl', ['$scope', '$location', 'Logic', function ListCtrl($scope, $location, Logic) {
+    .controller('ListCtrl', ['$scope', '$location', 'Logic', 'Api', function ListCtrl($scope, $location, Logic, Api) {
         if (Logic.isNew()) {
             $location.path('/login');
             return;
@@ -426,8 +426,19 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             var passName = password.url || password.login;
             var confirmTxt = 'Are you sure to delete password' +
                 (passName ? ' for <b>' + passName + '</b>' : '') + '?';
+            
             $scope.confirmDelete(confirmTxt, function () {
-                Logic.remove(password).$promise.then($scope.toFlash('Password deleted.'));
+                function _delPass() {
+                    Logic.remove(password).$promise.then($scope.toFlash('Password deleted.'));
+                }
+
+                if (password.files && password.files.length) {
+                    var deleteFileKeys = [];
+                    for (var i = 0; i < password.files.length; i++) {
+                        deleteFileKeys.push(password.files[i].key);
+                    }
+                    Api.deleteFiles({keys: deleteFileKeys}, _delPass);
+                } else _delPass();
             })
         };
         $scope.preDelete = function (p) {
