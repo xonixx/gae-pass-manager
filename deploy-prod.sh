@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-mvn appengine:update -Dappid=xonixpwd-test
+mvn appengine:update -Dappid=xonixpwd
