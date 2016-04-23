@@ -17,6 +17,9 @@ import java.util.logging.Logger;
 public abstract class JsonReply {
     private static final Logger log = Logger.getLogger(JsonReply.class.getName());
 
+    public static final String SUCCESS = "success";
+    public static final String ERROR = "error";
+
     private HttpServletResponse resp;
     private final Map<String, Object> res = new LinkedHashMap<>();
     private int status = HttpServletResponse.SC_OK;
@@ -48,7 +51,7 @@ public abstract class JsonReply {
     protected void err404(String errorMsg) {
         log.severe("ERROR 404: " + errorMsg);
 
-        res.put("error", errorMsg);
+        res.put(ERROR, errorMsg);
         status = HttpServletResponse.SC_NOT_FOUND;
     }
 
@@ -62,20 +65,22 @@ public abstract class JsonReply {
                         TransactionOptions.Builder.withXG(true));
 
             fillJson();
-
-            if (transaction != null)
-                transaction.commit();
         } catch (Throwable t) {
             status = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-            res.put("error", t.toString());
+            res.put(ERROR, t.toString());
             t.printStackTrace();
         }
 
         boolean success = status == HttpServletResponse.SC_OK;
-        if (transaction != null && !success && transaction.isActive()) {
-            transaction.rollback();
+        if (transaction != null) {
+            if (success)
+                transaction.commit();
+            else if (transaction.isActive()) {
+                log.warning("Rollback tx");
+                transaction.rollback();
+            }
         }
-        res.put("success", success);
+        res.put(SUCCESS, success);
         resp.setStatus(status);
 
         resp.getWriter().print(Logic.gson.toJson(res));
