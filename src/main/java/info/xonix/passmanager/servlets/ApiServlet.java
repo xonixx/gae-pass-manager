@@ -61,7 +61,7 @@ public class ApiServlet extends HttpServlet {
 
     @Override
     protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        new JsonReply(resp) {
+        new JsonReply(resp, true) {
             @Override
             public void fillJson() throws IOException {
                 String action = req.getParameter(ACTION);
