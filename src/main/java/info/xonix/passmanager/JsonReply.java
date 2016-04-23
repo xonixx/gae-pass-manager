@@ -9,6 +9,7 @@ import java.util.Map;
  * User: xonix
  * Date: 26.03.16
  * Time: 23:01
+ * TODO: handle 404?
  */
 public abstract class JsonReply {
     public abstract void fillJson(Map<String, Object> result) throws IOException;

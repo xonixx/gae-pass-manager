@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * User: xonix
@@ -23,17 +24,19 @@ import java.util.Map;
  * Time: 20:50
  */
 public class ApiServlet extends HttpServlet {
+    private static final Logger log = Logger.getLogger(ApiServlet.class.getName());
+
     public static final String ACTION = "action";
 
     public static final String ACTION_LOAD = "load";
-    public static final String ACTION_SAVE = "save";
-
     public static final String ACTION_LOAD_FILE = "loadFile";
-    public static final String ACTION_SAVE_FILES = "saveFiles";
-    public static final String ACTION_DELETE_FILES = "deleteFiles";
+
+    public static final String ACTION_MODIFY = "modify";
+    public static final String SUB_ACTION_SAVE_DATA = "saveData";
+    public static final String SUB_ACTION_SAVE_FILES = "saveFiles";
+    public static final String SUB_ACTION_DELETE_FILES = "deleteFiles";
 
     public static final String PARAM_KEY = "key";
-    public static final String PARAM_KEYS = "keys";
     public static final String PARAM_DATA = "data";
 
     @Override
@@ -57,30 +60,45 @@ public class ApiServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(final HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         JsonReply.reply(resp, new JsonReply() {
             @Override
             public void fillJson(Map<String, Object> result) throws IOException {
                 String action = req.getParameter(ACTION);
-                Map json = Logic.gson.fromJson(new InputStreamReader(req.getInputStream()), Map.class);
+                Map<?, ?> json = Logic.gson.fromJson(new InputStreamReader(req.getInputStream()), Map.class);
 
-                if (ACTION_SAVE.equals(action)) {
-                    Date lastUpdated = AppLogic.storeEncryptedPassData((String) json.get(PARAM_DATA));
+                if (!ACTION_MODIFY.equals(action)) {
+                    resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    log.severe("404: action " + action);
+                    return;
+                }
 
-                    result.put("lastUpdated", lastUpdated);
-                } else if (ACTION_SAVE_FILES.equals(action)) {
-                    List<Map> files = (List<Map>) json.get("files");
-                    Date uploaded = null;
-                    for (Map file : files) {
-                        String key = (String) file.get(PARAM_KEY);
-                        String data = (String) file.get(PARAM_DATA);
-                        uploaded = AppLogic.saveFile(key, data);
-                    }
-                    result.put("uploaded", uploaded);
-                } else if (ACTION_DELETE_FILES.equals(action)) {
-                    List<String> keys = (List<String>) json.get(PARAM_KEYS);
-                    for (String key : keys) {
-                        AppLogic.deleteFile(key);
+                for (Map.Entry entry : json.entrySet()) {
+                    String subAction = (String) entry.getKey();
+                    Object subActionData = entry.getValue();
+
+                    if (SUB_ACTION_SAVE_DATA.equals(subAction)) {
+                        Date lastUpdated = AppLogic.storeEncryptedPassData((String) subActionData);
+                        result.put("lastUpdated", lastUpdated);
+
+                    } else if (SUB_ACTION_SAVE_FILES.equals(subAction)) {
+                        List<Map> files = (List<Map>) subActionData;
+                        Date uploaded = null;
+                        for (Map file : files) {
+                            String key = (String) file.get(PARAM_KEY);
+                            String data = (String) file.get(PARAM_DATA);
+                            uploaded = AppLogic.saveFile(key, data);
+                        }
+                        result.put("uploaded", uploaded);// TODO
+
+                    } else if (SUB_ACTION_DELETE_FILES.equals(subAction)) {
+                        List<String> keys = (List<String>) subActionData;
+                        for (String key : keys) {
+                            AppLogic.deleteFile(key);
+                        }
+                    } else {
+                        resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                        log.severe("404: subAction " + subAction);
                     }
                 }
             }
