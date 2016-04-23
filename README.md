@@ -17,6 +17,7 @@ master-password-protected HTML page.
 1. Minimalistic design with filtering and tags.
 1. Copy any login/password by single click of a mouse.
 1. Automatically logs you out after 5 minutes of inactivity.
+1. **(NEW!)** File attachments support (up to 500 KB). Fully client-encrypted (like in [mega.nz](https://mega.nz)).
 
 ## Installation
 1. You need to have installed Java 7, Maven 3.
@@ -32,9 +33,13 @@ master-password-protected HTML page.
 ![Login with master password](/screenshots/1_login.png?raw=true)
 #### Main screen
 ![Main screen](/screenshots/2_list.png?raw=true)
+#### Copy with a click
+![Main screen](/screenshots/2a_copy_pass.png?raw=true)
 #### Edit record
 ![Edit record](/screenshots/3_edit.png?raw=true)
 #### Delete record
 ![Delete record](/screenshots/4_delete.png?raw=true)
+#### Delete record (2)
+![Delete record](/screenshots/4a_delete.png?raw=true)
 #### Change master password
 ![Change master password](/screenshots/5_change_master.png?raw=true)
