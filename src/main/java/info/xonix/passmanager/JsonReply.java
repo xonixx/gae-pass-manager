@@ -4,30 +4,58 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * User: xonix
  * Date: 26.03.16
  * Time: 23:01
- * TODO: handle 404?
  */
 public abstract class JsonReply {
-    public abstract void fillJson(Map<String, Object> result) throws IOException;
+    private static final Logger log = Logger.getLogger(JsonReply.class.getName());
 
-    public static void reply(HttpServletResponse resp, JsonReply jsonReply) throws IOException {
+    private HttpServletResponse resp;
+    private final Map<String, Object> res = new LinkedHashMap<>();
+    private int status = HttpServletResponse.SC_OK;
+
+    public JsonReply(HttpServletResponse resp) throws IOException {
+        this.resp = resp;
+        reply();
+    }
+
+    protected abstract void fillJson() throws IOException;
+
+    /**
+     * Put field to resulting JSON
+     */
+    protected void putField(String key, Object val) {
+        res.put(key, val);
+    }
+
+    protected void putAllFields(Map<String, ?> data) {
+        res.putAll(data);
+    }
+
+    protected void err404(String errorMsg) {
+        log.severe("ERROR 404: " + errorMsg);
+
+        res.put("error", errorMsg);
+        status = HttpServletResponse.SC_NOT_FOUND;
+    }
+
+    private void reply() throws IOException {
         resp.setContentType("application/json");
 
-        Map<String, Object> res = new LinkedHashMap<>();
-        res.put("success", true);
-
         try {
-            jsonReply.fillJson(res);
+            fillJson();
         } catch (Throwable t) {
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            t.printStackTrace();
-            res.put("success", false);
+            status = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
             res.put("error", t.toString());
+            t.printStackTrace();
         }
+
+        res.put("success", status == HttpServletResponse.SC_OK);
+        resp.setStatus(status);
 
         resp.getWriter().print(Logic.gson.toJson(res));
         resp.getWriter().flush();

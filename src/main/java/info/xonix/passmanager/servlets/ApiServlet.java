@@ -41,35 +41,34 @@ public class ApiServlet extends HttpServlet {
 
     @Override
     protected void doGet(final HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        JsonReply.reply(resp, new JsonReply() {
+        new JsonReply(resp) {
             @Override
-            public void fillJson(Map<String, Object> result) {
+            public void fillJson() {
                 String action = req.getParameter(ACTION);
                 if (ACTION_LOAD.equals(action)) {
                     PassData passData = AppLogic.getEncyptedPassData();
                     if (passData != null)
-                        result.putAll(Util.objectToMap(passData));
+                        putAllFields(Util.objectToMap(passData));
                 } else if (ACTION_LOAD_FILE.equals(action)) {
                     String key = req.getParameter(PARAM_KEY);
                     Attachment att = AppLogic.loadFile(key);
                     if (att != null)
-                        result.putAll(Util.objectToMap(att));
+                        putAllFields(Util.objectToMap(att));
                 }
             }
-        });
+        };
     }
 
     @Override
     protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        JsonReply.reply(resp, new JsonReply() {
+        new JsonReply(resp) {
             @Override
-            public void fillJson(Map<String, Object> result) throws IOException {
+            public void fillJson() throws IOException {
                 String action = req.getParameter(ACTION);
                 Map<?, ?> json = Logic.gson.fromJson(new InputStreamReader(req.getInputStream()), Map.class);
 
                 if (!ACTION_MODIFY.equals(action)) {
-                    resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                    log.severe("404: action " + action);
+                    err404("action " + action);
                     return;
                 }
 
@@ -79,7 +78,7 @@ public class ApiServlet extends HttpServlet {
 
                     if (SUB_ACTION_SAVE_DATA.equals(subAction)) {
                         Date lastUpdated = AppLogic.storeEncryptedPassData((String) subActionData);
-                        result.put("lastUpdated", lastUpdated);
+                        putField("lastUpdated", lastUpdated);
 
                     } else if (SUB_ACTION_SAVE_FILES.equals(subAction)) {
                         List<Map> files = (List<Map>) subActionData;
@@ -89,7 +88,7 @@ public class ApiServlet extends HttpServlet {
                             String data = (String) file.get(PARAM_DATA);
                             uploaded = AppLogic.saveFile(key, data);
                         }
-                        result.put("uploaded", uploaded);// TODO
+                        putField("uploaded", uploaded);// TODO
 
                     } else if (SUB_ACTION_DELETE_FILES.equals(subAction)) {
                         List<String> keys = (List<String>) subActionData;
@@ -97,11 +96,10 @@ public class ApiServlet extends HttpServlet {
                             AppLogic.deleteFile(key);
                         }
                     } else {
-                        resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                        log.severe("404: subAction " + subAction);
+                        err404("subAction " + subAction);
                     }
                 }
             }
-        });
+        };
     }
 }
