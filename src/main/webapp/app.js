@@ -208,8 +208,12 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 for (var i = 0; i < p.files.length; i++) {
                     deleteFileKeys.push(p.files[i].key);
                 }
-                // TODO what if this fails but pwd will be alreay removed from UI?
-                return this.store({deleteFileKeys: deleteFileKeys});
+                var call = this.store({deleteFiles: deleteFileKeys});
+                call.$promise.catch(function () {
+                    // as pass was not removed - restore it
+                    pp.splice(idx, 0, p)
+                });
+                return call;
             },
             getByUid: function (uid) {
                 var pp = this.getPasswords();
