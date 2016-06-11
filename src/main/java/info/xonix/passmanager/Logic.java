@@ -52,6 +52,7 @@ public class Logic {
         Map<String, Object> globals = new LinkedHashMap<>();
 
         globals.put("email", getCurrentUser().getEmail());
+        globals.put("version", VersionManager.getApplicationVersion());
 
         if (offline)
             globals.put("offlineData", AppLogic.getEncyptedPassData());
