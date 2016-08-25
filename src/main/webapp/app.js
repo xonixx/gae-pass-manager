@@ -103,7 +103,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             if (typeof precision === 'undefined') precision = 1;
             var units = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB'],
                 number = Math.floor(Math.log(bytes) / Math.log(1024));
-            return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) + ' ' + units[number];
+            return (''+(bytes / Math.pow(1024, Math.floor(number))).toFixed(precision)).replace(/.0$/, '') + ' ' + units[number];
         }
     })
     .filter('to_trusted', ['$sce', function ($sce) {
@@ -187,6 +187,9 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
             },
             getPasswords: function () {
                 return (this.data.passwords || (this.data.passwords = []));
+            },
+            getDataSize: function () {
+                return (this.dataEncrypted || {}).length || 0;
             },
             addOrUpdate: function (password, additionalWork) {
                 var existing = this.getByUid(password.uid);
@@ -426,6 +429,7 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
 
         $scope.$scope = $scope;
         $scope.passwords = Logic.getPasswords();
+        $scope.dataSize = Logic.getDataSize();
 
         $scope.filterPasswords = function (passwords, searchStr) {
             if (!searchStr)
