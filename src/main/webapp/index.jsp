@@ -16,11 +16,11 @@
 
 <c:set var="minSuffix" value="<%= Env.getMinSuffix() %>"/>
 <c:set var="jsCss">
-    lib/jquery/jquery-2.2.1${minSuffix}.js
+    lib/jquery/jquery-2.2.4${minSuffix}.js
     lib/bootstrap/js/bootstrap${minSuffix}.js
-    lib/angular-1.4.9/angular${minSuffix}.js
-    lib/angular-1.4.9/angular-route${minSuffix}.js
-    lib/angular-1.4.9/angular-resource${minSuffix}.js
+    lib/angular/angular${minSuffix}.js
+    lib/angular/angular-route${minSuffix}.js
+    lib/angular/angular-resource${minSuffix}.js
     lib/ng-tags-input/ng-tags-input${minSuffix}.js
     lib/sjcl/sjcl.js
     lib/clipboardjs/clipboard${minSuffix}.js
