@@ -6,7 +6,7 @@
 absolutely free of any charge.
 1. Secure:
     1. Runs over HTTPS.
-    1. Application is behind Google account authorisation form. It means the login
+    1. Application is behind Google account authorization form. It means the login
       process is two-step - first you login with Google account, then you login into app
       with master-password.
     1. Client-side encryption (AES-256). All passwords data is encrypted/decrypted
