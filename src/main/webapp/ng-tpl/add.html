@@ -73,7 +73,7 @@
         <div class="form-group">
             <label class="col-sm-2 control-label">Tags</label>
             <div class="col-sm-10">
-                <tags-input ng-model="tags">
+                <tags-input ng-model="tags" min-length="1">
                     <auto-complete source="loadTags($query)" min-length="1"></auto-complete>
                 </tags-input>
             </div>
