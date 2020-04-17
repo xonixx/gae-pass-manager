@@ -28,6 +28,7 @@
             <!-- REQUIRED FOR SONAR! -->
             ${sonar-login-token}
         </sonar.login>
+        <sonar.exclusions>src/main/webapp/lib/**</sonar.exclusions>
     </properties>
 
     <profiles>
