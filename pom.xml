@@ -23,6 +23,11 @@
         <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
         <java-version>1.8</java-version>
         <webXmlPath>src/main/webapp/WEB-INF/web.xml</webXmlPath>
+        <sonar.host.url>https://sonar.cmlteam.com</sonar.host.url>
+        <sonar.login>
+            <!-- REQUIRED FOR SONAR! -->
+            ${sonar-login-token}
+        </sonar.login>
     </properties>
 
     <profiles>
@@ -209,6 +214,12 @@
                     <doUpdate>false</doUpdate>
                     <shortRevisionLength>7</shortRevisionLength>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.7.0.1746</version>
             </plugin>
         </plugins>
     </build>
