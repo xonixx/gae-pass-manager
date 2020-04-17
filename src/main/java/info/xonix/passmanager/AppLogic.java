@@ -61,9 +61,9 @@ public class AppLogic {
     long newBackupKey = -1;
     if (currentData != null) {
       long lastBackupKey = -1; // no backup
-      Long currnetBackupKey = (Long) currentData.getProperty(PROP_LAST_BACKUP_KEY);
-      if (currnetBackupKey != null) {
-        lastBackupKey = currnetBackupKey;
+      Long currentBackupKey = (Long) currentData.getProperty(PROP_LAST_BACKUP_KEY);
+      if (currentBackupKey != null) {
+        lastBackupKey = currentBackupKey;
       }
       newBackupKey = (lastBackupKey + 1) % BACKUPS_COUNT;
 
