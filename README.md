@@ -20,7 +20,7 @@ master-password-protected HTML page.
 1. **(NEW!)** File attachments support (up to 500 KB). Fully client-encrypted (like in [mega.nz](https://mega.nz)).
 
 ## Installation
-1. You need to have installed Java 7, Maven 3.
+1. You need to have installed Java 8, Maven 3.
 1. Create new GAE application. This gives you personal _https://your-app-id.appspot.com_ website.
 1. Checkout the code.
 1. Run `mvn appengine:update -Dappid=your-app-id`
@@ -28,18 +28,18 @@ master-password-protected HTML page.
 
 ## Some Screenshots
 #### Create master password
-![Create master password](/screenshots/0_create_master.png?raw=true)
+![Create master password](screenshots/0_create_master.png?raw=true)
 #### Login with master password
-![Login with master password](/screenshots/1_login.png?raw=true)
+![Login with master password](screenshots/1_login.png?raw=true)
 #### Main screen
-![Main screen](/screenshots/2_list.png?raw=true)
+![Main screen](screenshots/2_list.png?raw=true)
 #### Copy with a click
-![Main screen](/screenshots/2a_copy_pass.png?raw=true)
+![Main screen](screenshots/2a_copy_pass.png?raw=true)
 #### Edit record
-![Edit record](/screenshots/3_edit.png?raw=true)
+![Edit record](screenshots/3_edit.png?raw=true)
 #### Delete record
-![Delete record](/screenshots/4_delete.png?raw=true)
+![Delete record](screenshots/4_delete.png?raw=true)
 #### Delete record (2)
-![Delete record](/screenshots/4a_delete.png?raw=true)
+![Delete record](screenshots/4a_delete.png?raw=true)
 #### Change master password
-![Change master password](/screenshots/5_change_master.png?raw=true)
+![Change master password](screenshots/5_change_master.png?raw=true)

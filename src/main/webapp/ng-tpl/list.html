@@ -2,7 +2,8 @@
     <div class="row" id="header">
         <div class="col-xs-4">
             <h3>Passwords</h3>
-            <i style="position: absolute;font-size:.7em;top:27px">version: {{::global.version}}</i>
+            <i style="position: absolute;font-size:.7em;top:27px">version: {{::global.version}}
+                ({{::global.jvmName}} {{::global.jvm}} | GAE {{::global.gae}})</i>
         </div>
         <div class="col-xs-4" style="padding-top: 5px">
             <div ng-if="!readonly">
