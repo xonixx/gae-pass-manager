@@ -4,6 +4,21 @@
         <listener-class>info.xonix.passmanager.AppServCtxListener</listener-class>
     </listener>
 
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>everything</web-resource-name>
+            <url-pattern>/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <!-- Only App owner can access the app -->
+            <role-name>admin</role-name>
+        </auth-constraint>
+        <user-data-constraint>
+            <!-- Only allow HTTPS -->
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+
     <servlet>
         <servlet-name>Api</servlet-name>
         <servlet-class>info.xonix.passmanager.servlets.ApiServlet</servlet-class>
