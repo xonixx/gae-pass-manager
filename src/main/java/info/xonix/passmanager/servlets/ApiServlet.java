@@ -43,7 +43,7 @@ public class ApiServlet extends HttpServlet {
       public void fillJson() {
         String action = req.getParameter(ACTION);
         if (ACTION_LOAD.equals(action)) {
-          PassData passData = AppLogic.getEncyptedPassData();
+          PassData passData = AppLogic.getEncryptedPassData();
           if (passData != null) putAllFields(Util.objectToMap(passData));
         } else if (ACTION_LOAD_FILE.equals(action)) {
           String key = req.getParameter(PARAM_KEY);

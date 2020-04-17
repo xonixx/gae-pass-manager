@@ -25,7 +25,7 @@ public class AppLogic {
   public static final String PROP_TIMESTAMP = "timestamp";
   public static final String PROP_LAST_BACKUP_KEY = "lastBackupKey";
 
-  public static PassData getEncyptedPassData() {
+  public static PassData getEncryptedPassData() {
     Entity data = null;
     try {
       data = Logic.getDatastoreService().get(KeyFactory.createKey(ENTITY_DATA, KEY_MASTER_DATA));
@@ -87,13 +87,9 @@ public class AppLogic {
     return lastUpdated;
   }
 
-  /**
-   * @param key file id
-   * @return file existed or not
-   */
-  public static boolean deleteFile(String key) {
+  /** @param key file id */
+  public static void deleteFile(String key) {
     Logic.getDatastoreService().delete(KeyFactory.createKey(ENTITY_FILE, key));
-    return true; // TODO seems there is not effective way to check if record existed
   }
 
   /**

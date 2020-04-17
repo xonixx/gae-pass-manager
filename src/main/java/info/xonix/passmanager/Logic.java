@@ -53,7 +53,9 @@ public class Logic {
     globals.put("jvmName", System.getProperty("java.vm.name"));
     globals.put("gae", System.getProperty("com.google.appengine.runtime.version"));
 
-    if (offline) globals.put("offlineData", AppLogic.getEncyptedPassData());
+    if (offline) {
+      globals.put("offlineData", AppLogic.getEncryptedPassData());
+    }
 
     return gson.toJson(globals);
   }
