@@ -5,7 +5,9 @@ public final class Env {
   private static Boolean dev;
 
   public static boolean isDev() {
-    if (dev == null) dev = "1".equals(System.getProperty("dev"));
+    if (dev == null) {
+      dev = "1".equals(System.getProperty("dev"));
+    }
     return dev;
   }
 

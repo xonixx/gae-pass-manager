@@ -7,6 +7,9 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.io.IOUtils;
 
 import javax.servlet.ServletContext;
@@ -17,33 +20,27 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 /** User: xonix Date: 21.02.16 Time: 19:47 */
-public class Logic {
-  private static final Logger log = Logger.getLogger(Logic.class.getName());
+@RequiredArgsConstructor
+public class JspLogic {
+  private final Gson gson;
+  private final AppLogic appLogic;
+  private final UserService userService;
 
-  public static final Gson gson =
-      new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").create();
+  @Getter
+  @Setter
+  private static JspLogic instance;
 
-  // TODO: do we need to cache?
-  public static UserService getUserService() {
-    return UserServiceFactory.getUserService();
+  public User getCurrentUser() {
+    return userService.getCurrentUser();
   }
 
-  public static DatastoreService getDatastoreService() {
-    return DatastoreServiceFactory.getDatastoreService();
+  public String getLogoutUrl() {
+    return userService.createLogoutURL("/");
   }
 
-  public static User getCurrentUser() {
-    return getUserService().getCurrentUser();
-  }
-
-  public static String getLogoutUrl() {
-    return getUserService().createLogoutURL("/");
-  }
-
-  public static String renderGlobals(boolean offline) {
+  public String renderGlobals(boolean offline) {
     Map<String, Object> globals = new LinkedHashMap<>();
 
     User currentUser = getCurrentUser();
@@ -54,14 +51,13 @@ public class Logic {
     globals.put("gae", System.getProperty("com.google.appengine.runtime.version"));
 
     if (offline) {
-      globals.put("offlineData", AppLogic.getEncryptedPassData());
+      globals.put("offlineData", appLogic.getEncryptedPassData());
     }
 
     return gson.toJson(globals);
   }
 
-  public static String renderJsCss(
-      PageContext pageContext, String jsCssBlockName, boolean offline) {
+  public String renderJsCss(PageContext pageContext, String jsCssBlockName, boolean offline) {
 
     String jsCssBlockContent = (String) pageContext.getAttribute(jsCssBlockName);
     ServletContext servletContext = pageContext.getServletContext();
@@ -101,7 +97,9 @@ public class Logic {
 
   /** TODO: use data URI? */
   private static String getStringContent(ServletContext servletContext, String path, boolean isJs) {
-    if (!path.startsWith("/")) path = "/" + path;
+    if (!path.startsWith("/")) {
+      path = "/" + path;
+    }
 
     String str = pathToString(servletContext, path);
     if (isJs) {
@@ -124,14 +122,15 @@ public class Logic {
     }
   }
 
-  public static String renderNgTemplates(PageContext pageContext, boolean offline) {
-    if (!offline) return "";
+  public String renderNgTemplates(PageContext pageContext, boolean offline) {
+    if (!offline) {
+      return "";
+    }
 
     StringBuilder sb = new StringBuilder();
     ServletContext servletContext = pageContext.getServletContext();
-    Set files = servletContext.getResourcePaths("/ng-tpl/");
-    for (Object file : files) {
-      String fileName = (String) file;
+    Set<String> files = servletContext.getResourcePaths("/ng-tpl/");
+    for (String fileName : files) {
       if (fileName.endsWith(".html")) {
         sb.append("<script type=\"text/ng-template\" id=\"")
             .append(fileName)

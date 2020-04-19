@@ -1,19 +1,17 @@
 package info.xonix.passmanager;
 
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.EntityNotFoundException;
-import com.google.appengine.api.datastore.KeyFactory;
-import com.google.appengine.api.datastore.Text;
+import com.google.appengine.api.datastore.*;
 import info.xonix.passmanager.model.Attachment;
 import info.xonix.passmanager.model.PassData;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
-import java.util.logging.Logger;
 
 /** User: xonix Date: 26.03.16 Time: 21:45 */
+@Slf4j
+@RequiredArgsConstructor
 public class AppLogic {
-  private static final Logger log = Logger.getLogger(AppLogic.class.getName());
-
   public static final int BACKUPS_COUNT = 10;
   public static final String KEY_MASTER_DATA = "0";
 
@@ -25,10 +23,12 @@ public class AppLogic {
   public static final String PROP_TIMESTAMP = "timestamp";
   public static final String PROP_LAST_BACKUP_KEY = "lastBackupKey";
 
-  public static PassData getEncryptedPassData() {
+  private final DatastoreService datastoreService;
+
+  public PassData getEncryptedPassData() {
     Entity data = null;
     try {
-      data = Logic.getDatastoreService().get(KeyFactory.createKey(ENTITY_DATA, KEY_MASTER_DATA));
+      data = datastoreService.get(KeyFactory.createKey(ENTITY_DATA, KEY_MASTER_DATA));
     } catch (EntityNotFoundException e) {
       log.info("Data not found");
     }
@@ -37,7 +37,7 @@ public class AppLogic {
       String value = ((Text) data.getProperty(PROP_VALUE)).getValue();
       Date timestamp = (Date) data.getProperty(PROP_TIMESTAMP);
 
-      log.info("Found data of size: " + value.length() + ", lastUpdated: " + timestamp);
+      log.info("Found data of size: {}, lastUpdated: {}", value.length(), timestamp);
 
       return new PassData(value, timestamp);
     } else {
@@ -50,11 +50,10 @@ public class AppLogic {
    * @param encData data to store
    * @return last updated date
    */
-  public static Date storeEncryptedPassData(String encData) {
+  public Date storeEncryptedPassData(String encData) {
     Entity currentData = null;
     try {
-      currentData =
-          Logic.getDatastoreService().get(KeyFactory.createKey(ENTITY_DATA, KEY_MASTER_DATA));
+      currentData = datastoreService.get(KeyFactory.createKey(ENTITY_DATA, KEY_MASTER_DATA));
     } catch (EntityNotFoundException ignore) {
     }
 
@@ -67,12 +66,12 @@ public class AppLogic {
       }
       newBackupKey = (lastBackupKey + 1) % BACKUPS_COUNT;
 
-      log.info("Storing backup: #" + newBackupKey);
+      log.info("Storing backup: #{}", newBackupKey);
 
       Entity backupData = new Entity(ENTITY_DATA_BACKUP, "" + newBackupKey);
       backupData.setProperty(PROP_VALUE, currentData.getProperty(PROP_VALUE));
       backupData.setProperty(PROP_TIMESTAMP, new Date());
-      Logic.getDatastoreService().put(backupData);
+      datastoreService.put(backupData);
     }
 
     Entity data = new Entity(ENTITY_DATA, KEY_MASTER_DATA);
@@ -81,15 +80,15 @@ public class AppLogic {
     data.setProperty(PROP_TIMESTAMP, lastUpdated);
     data.setProperty(PROP_LAST_BACKUP_KEY, newBackupKey);
 
-    log.info("Storing data of size: " + encData.length());
+    log.info("Storing data of size: {}", encData.length());
 
-    Logic.getDatastoreService().put(data);
+    datastoreService.put(data);
     return lastUpdated;
   }
 
   /** @param key file id */
-  public static void deleteFile(String key) {
-    Logic.getDatastoreService().delete(KeyFactory.createKey(ENTITY_FILE, key));
+  public void deleteFile(String key) {
+    datastoreService.delete(KeyFactory.createKey(ENTITY_FILE, key));
   }
 
   /**
@@ -97,7 +96,7 @@ public class AppLogic {
    * @param data encrypted file content
    * @return file upload date
    */
-  public static Date saveFile(String key, String data) {
+  public Date saveFile(String key, String data) {
     Entity fileEntity = new Entity(ENTITY_FILE, key);
 
     Date uploadDate = new Date();
@@ -105,9 +104,9 @@ public class AppLogic {
     fileEntity.setProperty(PROP_TIMESTAMP, uploadDate);
     fileEntity.setProperty(PROP_VALUE, new Text(data));
 
-    Logic.getDatastoreService().put(fileEntity);
+    datastoreService.put(fileEntity);
 
-    log.info("Uploaded file key=" + key + ", size=" + data.length());
+    log.info("Uploaded file key={}, size={}", key, data.length());
     return uploadDate;
   }
 
@@ -115,14 +114,14 @@ public class AppLogic {
    * @param key file id
    * @return file || null if absent
    */
-  public static Attachment loadFile(String key) {
+  public Attachment loadFile(String key) {
     try {
-      Entity file = Logic.getDatastoreService().get(KeyFactory.createKey(ENTITY_FILE, key));
+      Entity file = datastoreService.get(KeyFactory.createKey(ENTITY_FILE, key));
       return new Attachment(
           ((Text) file.getProperty(PROP_VALUE)).getValue(),
           (Date) file.getProperty(PROP_TIMESTAMP));
     } catch (EntityNotFoundException e) {
-      log.info("File not found for key:" + key);
+      log.info("File not found for key:{}", key);
       return null;
     }
   }

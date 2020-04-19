@@ -1,5 +1,5 @@
 <%@ page import="info.xonix.passmanager.Env" %>
-<%@ page import="info.xonix.passmanager.Logic" %>
+<%@ page import="info.xonix.passmanager.JspLogic" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.Date" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -33,24 +33,25 @@
 
 <head>
     <script>
-        var global=<%= Logic.renderGlobals(offline) %>;
+        var global =<%= JspLogic.getInstance().renderGlobals(offline) %>;
     </script>
-    <%= Logic.renderNgTemplates(pageContext, offline) %>
-    <%= Logic.renderJsCss(pageContext, "jsCss", offline) %>
+    <%= JspLogic.getInstance().renderNgTemplates(pageContext, offline) %>
+    <%= JspLogic.getInstance().renderJsCss(pageContext, "jsCss", offline) %>
 </head>
 
 <body ng-controller="RootCtrl">
-    <div class="alert alert-success" ng-if="flashMsg">{{flashMsg}}</div>
-    <div class="alert alert-danger" ng-if="flashErr">
-        <button type="button" class="close" title="Close" ng-click="$parent.flashErr=null">&times;</button>
-        <b>{{flashErr}}</b>
-    </div>
-    <ng-view></ng-view>
+<div class="alert alert-success" ng-if="flashMsg">{{flashMsg}}</div>
+<div class="alert alert-danger" ng-if="flashErr">
+    <button type="button" class="close" title="Close" ng-click="$parent.flashErr=null">&times;</button>
+    <b>{{flashErr}}</b>
+</div>
+<ng-view></ng-view>
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" ng-if="deleteObj">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title">Confirm deletion</h4>
             </div>
             <div class="modal-body">
@@ -73,9 +74,11 @@
                 </button>
                 <button type="button" class="btn btn-primary"
                         ng-if="!deleteConfirm2"
-                        ng-click="$scope.deleteConfirm2=1">Delete!</button>
+                        ng-click="$scope.deleteConfirm2=1">Delete!
+                </button>
                 <button type="button" class="btn btn-default"
-                        ng-click="deleteObj.cancel()">Cancel</button>
+                        ng-click="deleteObj.cancel()">Cancel
+                </button>
             </div>
         </div>
     </div>

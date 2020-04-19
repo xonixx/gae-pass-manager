@@ -1,82 +1,100 @@
 package info.xonix.passmanager;
 
+import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.Transaction;
 import com.google.appengine.api.datastore.TransactionOptions;
+import com.google.gson.Gson;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.logging.Logger;
+
+import static javax.servlet.http.HttpServletResponse.*;
 
 /** User: xonix Date: 26.03.16 Time: 23:01 */
-public abstract class JsonReply {
-  private static final Logger log = Logger.getLogger(JsonReply.class.getName());
-
+@Slf4j
+@RequiredArgsConstructor
+public class JsonReply {
   public static final String SUCCESS = "success";
   public static final String ERROR = "error";
 
-  private HttpServletResponse resp;
-  private final Map<String, Object> res = new LinkedHashMap<>();
-  private int status = HttpServletResponse.SC_OK;
-  private boolean transactional;
+  private final Gson gson;
+  private final DatastoreService datastoreService;
 
-  public JsonReply(HttpServletResponse resp, boolean transactional) throws IOException {
-    this.resp = resp;
-    this.transactional = transactional;
-    reply();
+  interface JsonFormer {
+    void formJson(JsonBuilder jsonBuilder) throws Exception;
   }
 
-  public JsonReply(HttpServletResponse resp) throws IOException {
-    this(resp, false);
+  interface JsonBuilder {
+    void setStatus(int status);
+
+    void putField(String key, Object val);
+
+    void putAllFields(Map<String, ?> data);
+
+    default void err404(String errorMsg){
+      log.error("ERROR 404: " + errorMsg);
+      setStatus(SC_NOT_FOUND);
+      putField(ERROR, errorMsg);
+    }
   }
 
-  protected abstract void fillJson() throws IOException;
+  private static class JsonBuilderImpl implements JsonBuilder {
+    final Map<String, Object> res = new LinkedHashMap<>();
+    int status = SC_OK;
 
-  /** Put field to resulting JSON */
-  protected void putField(String key, Object val) {
-    res.put(key, val);
+    @Override
+    public void setStatus(int status) {
+      this.status = status;
+    }
+
+    @Override
+    public void putField(String key, Object val) {
+      res.put(key, val);
+    }
+
+    @Override
+    public void putAllFields(Map<String, ?> data) {
+      res.putAll(data);
+    }
   }
 
-  protected void putAllFields(Map<String, ?> data) {
-    res.putAll(data);
-  }
-
-  protected void err404(String errorMsg) {
-    log.severe("ERROR 404: " + errorMsg);
-
-    res.put(ERROR, errorMsg);
-    status = HttpServletResponse.SC_NOT_FOUND;
-  }
-
-  private void reply() throws IOException {
+  void reply(HttpServletResponse resp, boolean transactional, JsonFormer jsonFormer)
+      throws IOException {
+    JsonBuilderImpl jsonBuilder = new JsonBuilderImpl();
     resp.setContentType("application/json");
 
     Transaction transaction = null;
     try {
-      if (transactional)
-        transaction =
-            Logic.getDatastoreService().beginTransaction(TransactionOptions.Builder.withXG(true));
+      if (transactional) {
+        transaction = datastoreService.beginTransaction(TransactionOptions.Builder.withXG(true));
+      }
 
-      fillJson();
-    } catch (Throwable t) {
-      status = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-      res.put(ERROR, t.toString());
-      t.printStackTrace();
+      jsonFormer.formJson(jsonBuilder);
+    } catch (Exception ex) {
+      jsonBuilder.setStatus(SC_INTERNAL_SERVER_ERROR);
+      jsonBuilder.putField(ERROR, ex.toString());
+      log.error("Unknown exception", ex);
     }
 
-    boolean success = status == HttpServletResponse.SC_OK;
+    boolean success = jsonBuilder.status == SC_OK;
     if (transaction != null) {
-      if (success) transaction.commit();
-      else if (transaction.isActive()) {
-        log.warning("Rollback tx");
+      if (success) {
+        transaction.commit();
+      } else if (transaction.isActive()) {
+        log.warn("Rollback tx");
         transaction.rollback();
       }
     }
-    res.put(SUCCESS, success);
-    resp.setStatus(status);
+    jsonBuilder.putField(SUCCESS, success);
+    resp.setStatus(jsonBuilder.status);
 
-    resp.getWriter().print(Logic.gson.toJson(res));
-    resp.getWriter().flush();
+    PrintWriter writer = resp.getWriter();
+    writer.print(gson.toJson(jsonBuilder.res));
+    writer.flush();
   }
 }
