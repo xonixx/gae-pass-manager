@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
 
-/** User: xonix Date: 26.03.16 Time: 21:45 */
 @Slf4j
 @RequiredArgsConstructor
 public class AppLogic {

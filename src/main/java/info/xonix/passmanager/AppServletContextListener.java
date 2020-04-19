@@ -12,7 +12,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-/** User: xonix Date: 06.03.16 Time: 17:36 */
 @Slf4j
 public class AppServletContextListener implements ServletContextListener {
   @Override

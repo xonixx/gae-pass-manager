@@ -1,6 +1,5 @@
 package info.xonix.passmanager;
 
-/** User: xonix Date: 06.03.16 Time: 17:30 */
 public final class Env {
   private static Boolean dev;
 
@@ -14,4 +13,6 @@ public final class Env {
   public static String getMinSuffix() {
     return isDev() ? "" : ".min";
   }
+
+  private Env() {}
 }

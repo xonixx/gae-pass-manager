@@ -15,7 +15,6 @@ import java.util.Map;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-/** User: xonix Date: 26.03.16 Time: 23:01 */
 @Slf4j
 @RequiredArgsConstructor
 public class JsonReply {
@@ -36,7 +35,7 @@ public class JsonReply {
 
     void putAllFields(Map<String, ?> data);
 
-    default void err404(String errorMsg){
+    default void err404(String errorMsg) {
       log.error("ERROR 404: " + errorMsg);
       setStatus(SC_NOT_FOUND);
       putField(ERROR, errorMsg);

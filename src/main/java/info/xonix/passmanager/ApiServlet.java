@@ -16,7 +16,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-/** User: xonix Date: 28.02.16 Time: 20:50 */
 @RequiredArgsConstructor
 @Slf4j
 public class ApiServlet extends HttpServlet {

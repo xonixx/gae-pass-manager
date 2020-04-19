@@ -5,7 +5,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class VersionManager {
+public final class VersionManager {
   private static final Logger log = Logger.getLogger(VersionManager.class.getName());
 
   private static final Properties versionProps = new Properties();
@@ -26,4 +26,6 @@ public class VersionManager {
         + "r"
         + versionProps.getProperty("revision", UNKNOWN);
   }
+
+  private VersionManager() {}
 }

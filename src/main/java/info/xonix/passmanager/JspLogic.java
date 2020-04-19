@@ -1,12 +1,8 @@
 package info.xonix.passmanager;
 
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -21,16 +17,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-/** User: xonix Date: 21.02.16 Time: 19:47 */
 @RequiredArgsConstructor
 public class JspLogic {
   private final Gson gson;
   private final AppLogic appLogic;
   private final UserService userService;
 
-  @Getter
-  @Setter
-  private static JspLogic instance;
+  @Getter @Setter private static JspLogic instance;
 
   public User getCurrentUser() {
     return userService.getCurrentUser();
@@ -86,10 +79,11 @@ public class JspLogic {
         } else {
           res.append("<link rel=\"stylesheet\" href=\"").append(line).append("\"/>\n");
         }
-      } else
+      } else {
         res.append("<script>alert(\"Can't determine JS/CSS type: ")
-            .append(line)
-            .append("\")</script>\n");
+                .append(line)
+                .append("\")</script>\n");
+      }
     }
 
     return res.toString();

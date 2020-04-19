@@ -5,8 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-/** User: xonix Date: 26.03.16 Time: 22:42 */
-public class Util {
+public final class Util {
   public static Map<String, Object> objectToMap(Object o) {
     Objects.requireNonNull(o);
 
@@ -21,4 +20,6 @@ public class Util {
     }
     return res;
   }
+
+  private Util() {}
 }
