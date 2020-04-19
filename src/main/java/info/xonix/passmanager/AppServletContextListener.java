@@ -30,10 +30,10 @@ public class AppServletContextListener implements ServletContextListener {
     UserService userService = UserServiceFactory.getUserService();
 
     AppLogic appLogic = new AppLogic(datastoreService);
-    JsonReply jsonReply = new JsonReply(gson, datastoreService);
+    JsonReplyLogic jsonReplyLogic = new JsonReplyLogic(gson, datastoreService);
 
     servletContext
-        .addServlet("Api", new ApiServlet(gson, appLogic, jsonReply))
+        .addServlet("Api", new ApiServlet(gson, appLogic, jsonReplyLogic))
         .addMapping("/api/*");
 
     JspLogic jspLogic = new JspLogic(gson, appLogic, userService);
