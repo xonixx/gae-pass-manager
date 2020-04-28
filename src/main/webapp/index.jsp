@@ -22,7 +22,7 @@
     lib/angular/angular-route${minSuffix}.js
     lib/angular/angular-resource${minSuffix}.js
     lib/ng-tags-input/ng-tags-input${minSuffix}.js
-    lib/sjcl/sjcl.js
+    lib/sjcl/sjcl${minSuffix}.js
     lib/clipboardjs/clipboard${minSuffix}.js
     lib/bootstrap/css/bootstrap${minSuffix}.css
     lib/bootstrap/css/bootstrap-theme${minSuffix}.css
