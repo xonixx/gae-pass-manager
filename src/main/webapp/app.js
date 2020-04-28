@@ -12,6 +12,12 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
     .config(['$compileProvider', function ($compileProvider) {
         $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|data|file):/);
     }])
+    .config(['$httpProvider', function ($httpProvider) {
+        $httpProvider.interceptors.push('errorInterceptor');
+    }])
+    .config(['$locationProvider', function ($locationProvider) {
+        $locationProvider.hashPrefix('');
+    }])
     .factory('errorInterceptor', ['$q', '$rootScope', function ($q, $rootScope) {
         return {
             responseError: function (rejection) {
@@ -20,9 +26,6 @@ angular.module('pass-manager', ['ngRoute', 'ngResource', 'ngTagsInput'])
                 return $q.reject(rejection);
             }
         }
-    }])
-    .config(['$httpProvider', function ($httpProvider) {
-        $httpProvider.interceptors.push('errorInterceptor');
     }])
     .directive('pass', [function () {
         return function (scope, elem, attrs) {
