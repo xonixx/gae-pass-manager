@@ -1,91 +1,154 @@
 <div class="container">
-    <h3 class="text-center">{{readonly ? 'View' : isEdit ? 'Edit' : 'Add'}}</h3>
-    <form name="passForm" class="form-horizontal" novalidate autocomplete="off">
-        <div style="height: 0;width: 0;overflow: hidden"><%-- hack against chrome autocomplete --%>
-            <input type="text" name="fakeusername"/>
-            <input type="password" name="fakepassword"/>
-        </div>
-        <div class="form-group">
-            <label for="inputUrl" class="col-sm-2 control-label">URL</label>
-            <div class="col-sm-10">
-                <input ng-model="password.url" type="text" class="form-control" id="inputUrl" placeholder="URL">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="inputLogin" class="col-sm-2 control-label">Login</label>
-            <div class="col-sm-10">
-                <input ng-model="password.login" type="text" class="form-control" id="inputLogin" placeholder="Login">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="inputPass" class="col-sm-2 control-label">Password</label>
-            <div class="col-sm-10">
-                <input ng-model="password.pass" type="password" pass="" class="form-control" id="inputPass"
-                       placeholder="Password">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="secureData" class="col-sm-2 control-label">Secure data</label>
-            <div class="col-sm-10">
-                <textarea ng-model="password.secureData" secure-data="" class="form-control" id="secureData"
-                          placeholder="Secure data"></textarea>
-            </div>
-        </div>
-        <div class="form-group" ng-if="password.files.length">
-            <label class="col-sm-2 control-label">Files</label>
-            <div class="col-sm-10">
-                <!--{{password.files}}-->
-                <table class="files-tbl">
-                    <tr ng-repeat="f in password.files track by f.key" ng-class="{deleted:deletedFiles[f.key]}">
-                        <td class="t"><a style="cursor: pointer" ng-click="dl(f)">{{f.name}}</a></td>
-                        <td class="t">{{f.size | bytes}}</td>
-                        <td ng-if="!readonly">
-                            <button ng-click="rmFile(f,1)" ng-if="!deletedFiles[f.key]"
-                                    type="button" class="btn btn-warning btn-xs">
-                                <span class="glyphicon glyphicon-remove"></span></button>
-                            <button ng-click="rmFile(f,0)" ng-if="deletedFiles[f.key]"
-                                    type="button" class="btn btn-primary btn-xs">
-                                Undelete</button>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-        <div class="form-group" ng-repeat="f in newFiles track by f.uid">
-            <label for="inputFiles-{{f.uid}}" class="col-sm-2 control-label">{{$index==0 ? 'Add Files' : ''}}</label>
-            <div class="col-sm-{{f.file ? 9 : 10}}">
-                <input type="file" class="form-control" id="inputFiles-{{f.uid}}"
-                       file-change="newFileChanged(f, files, $event, $last)">
-            </div>
-            <div class="col-sm-1" ng-if="f.file" style="padding-left: 0">
-                <button ng-click="rmNewFile($index)"
-                        type="button" class="btn btn-warning" style="width: 100%">
-                    <span class="glyphicon glyphicon-remove"></span></button>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="inputDescr" class="col-sm-2 control-label">Description</label>
-            <div class="col-sm-10">
-                <textarea ng-model="password.descr" class="form-control" id="inputDescr"
-                          placeholder="Description"></textarea>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">Tags</label>
-            <div class="col-sm-10">
-                <tags-input ng-model="tags" min-length="1">
-                    <auto-complete source="loadTags($query)" min-length="1"></auto-complete>
-                </tags-input>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-                <button type="button" class="btn btn-success"
-                        ng-if="!readonly"
-                        ng-click="save(password)">Save
-                </button>
-                <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
-            </div>
-        </div>
-    </form>
+  <h3 class="text-center">{{readonly ? 'View' : isEdit ? 'Edit' : 'Add'}}</h3>
+  <form name="passForm" class="form-horizontal" novalidate autocomplete="off">
+    <div style="height: 0; width: 0; overflow: hidden;">
+      <%-- hack against chrome autocomplete --%>
+      <input type="text" name="fakeusername" />
+      <input type="password" name="fakepassword" />
+    </div>
+    <div class="form-group">
+      <label for="inputUrl" class="col-sm-2 control-label">URL</label>
+      <div class="col-sm-10">
+        <input
+          ng-model="password.url"
+          type="text"
+          class="form-control"
+          id="inputUrl"
+          placeholder="URL"
+        />
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="inputLogin" class="col-sm-2 control-label">Login</label>
+      <div class="col-sm-10">
+        <input
+          ng-model="password.login"
+          type="text"
+          class="form-control"
+          id="inputLogin"
+          placeholder="Login"
+        />
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="inputPass" class="col-sm-2 control-label">Password</label>
+      <div class="col-sm-10">
+        <input
+          ng-model="password.pass"
+          type="password"
+          pass=""
+          class="form-control"
+          id="inputPass"
+          placeholder="Password"
+        />
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="secureData" class="col-sm-2 control-label">Secure data</label>
+      <div class="col-sm-10">
+        <textarea
+          ng-model="password.secureData"
+          secure-data=""
+          class="form-control"
+          id="secureData"
+          placeholder="Secure data"
+        ></textarea>
+      </div>
+    </div>
+    <div class="form-group" ng-if="password.files.length">
+      <label class="col-sm-2 control-label">Files</label>
+      <div class="col-sm-10">
+        <!--{{password.files}}-->
+        <table class="files-tbl">
+          <tr
+            ng-repeat="f in password.files track by f.key"
+            ng-class="{deleted:deletedFiles[f.key]}"
+          >
+            <td class="t">
+              <a style="cursor: pointer;" ng-click="dl(f)">{{f.name}}</a>
+            </td>
+            <td class="t">{{f.size | bytes}}</td>
+            <td ng-if="!readonly">
+              <button
+                ng-click="rmFile(f,1)"
+                ng-if="!deletedFiles[f.key]"
+                type="button"
+                class="btn btn-warning btn-xs"
+              >
+                <span class="glyphicon glyphicon-remove"></span>
+              </button>
+              <button
+                ng-click="rmFile(f,0)"
+                ng-if="deletedFiles[f.key]"
+                type="button"
+                class="btn btn-primary btn-xs"
+              >
+                Undelete
+              </button>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="form-group" ng-repeat="f in newFiles track by f.uid">
+      <label for="inputFiles-{{f.uid}}" class="col-sm-2 control-label"
+        >{{$index==0 ? 'Add Files' : ''}}</label
+      >
+      <div class="col-sm-{{f.file ? 9 : 10}}">
+        <input
+          type="file"
+          class="form-control"
+          id="inputFiles-{{f.uid}}"
+          file-change="newFileChanged(f, files, $event, $last)"
+        />
+      </div>
+      <div class="col-sm-1" ng-if="f.file" style="padding-left: 0;">
+        <button
+          ng-click="rmNewFile($index)"
+          type="button"
+          class="btn btn-warning"
+          style="width: 100%;"
+        >
+          <span class="glyphicon glyphicon-remove"></span>
+        </button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="inputDescr" class="col-sm-2 control-label">Description</label>
+      <div class="col-sm-10">
+        <textarea
+          ng-model="password.descr"
+          class="form-control"
+          id="inputDescr"
+          placeholder="Description"
+        ></textarea>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Tags</label>
+      <div class="col-sm-10">
+        <tags-input ng-model="tags" min-length="1">
+          <auto-complete
+            source="loadTags($query)"
+            min-length="1"
+          ></auto-complete>
+        </tags-input>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button
+          type="button"
+          class="btn btn-success"
+          ng-if="!readonly"
+          ng-click="save(password)"
+        >
+          Save
+        </button>
+        <button type="button" class="btn btn-default" ng-click="cancel()">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </form>
 </div>

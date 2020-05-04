@@ -1,66 +1,65 @@
-
 #search-box {
-    width: 100%;
+  width: 100%;
 }
 
 .pass-block {
-    padding: 10px 0;
-    background: #eee;
-    margin-top: 10px;
+  padding: 10px 0;
+  background: #eee;
+  margin-top: 10px;
 }
 .pass-block.row {
-    margin-left: 0;
-    margin-right: 0;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .pass-block .login {
-    font-weight: bold;
+  font-weight: bold;
 }
 .pass-block .descr {
-    font-style: italic;
+  font-style: italic;
 }
 
 .pass-block .tag {
-    background-color: #ffb;
-    font-weight: bold;
-    margin-right: 5px;
-    padding: 3px;
-    border: solid 1px #bbb;
+  background-color: #ffb;
+  font-weight: bold;
+  margin-right: 5px;
+  padding: 3px;
+  border: solid 1px #bbb;
 }
 
 .pass-block button[disabled="disabled"] {
-    opacity: .4;
+  opacity: 0.4;
 }
 
 #info-block {
-    text-align: right;
+  text-align: right;
 }
 
 #header {
-    padding: 5px 0;
+  padding: 5px 0;
 }
 #header h3 {
-    margin-top: 0;
-    padding-top: 5px;
+  margin-top: 0;
+  padding-top: 5px;
 }
 
 #current-user {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .secure-data-hide {
-    background-color: #ddd;
-    color: #ddd;
+  background-color: #ddd;
+  color: #ddd;
 }
 
 .btn-edit-del {
-    width: 60px;
+  width: 60px;
 }
 
 .files-tbl td {
-    padding: 5px;
+  padding: 5px;
 }
 
 .files-tbl .deleted .t {
-    text-decoration: line-through;
+  text-decoration: line-through;
 }
