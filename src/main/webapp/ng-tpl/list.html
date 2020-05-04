@@ -28,7 +28,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-xs-10">
       <input
         type="text"
         id="search-box"
@@ -37,9 +37,15 @@
         placeholder="Filter..."
       />
     </div>
+    <div class="col-xs-2 checkbox text-center">
+      <label>
+        <input type="checkbox" ng-model="showObsolete" />
+        Show obsolete
+      </label>
+    </div>
   </div>
   <div
-    ng-repeat="p in (filterPasswords(passwords,searchStr) | orderBy:'updated||created||1':true) track by p.uid"
+    ng-repeat="p in (filterPasswords(passwords,searchStr,showObsolete) | orderBy:'updated||created||1':true) track by p.uid"
     class="pass-block row"
   >
     <div class="col-xs-9">

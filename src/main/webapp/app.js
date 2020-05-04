@@ -548,9 +548,19 @@ angular
       $scope.$scope = $scope;
       $scope.passwords = Logic.getPasswords();
       $scope.dataSize = Logic.getDataSize();
+      $scope.showObsolete = false;
 
-      $scope.filterPasswords = function (passwords, searchStr) {
-        if (!searchStr) return passwords;
+      $scope.filterPasswords = function (passwords, searchStr, showObsolete) {
+        if (!showObsolete) {
+          passwords = passwords.filter(
+            (p) =>
+              (p.tags || []).filter((t) => t.toLowerCase() === "obsolete")
+                .length === 0
+          );
+        }
+        if (!searchStr) {
+          return passwords;
+        }
         const parts = searchStr.toLowerCase().replace(/ +/g, " ").split(" ");
         const res = [];
         for (let i = 0; i < passwords.length; i++) {
@@ -566,7 +576,9 @@ angular
               break;
             }
           }
-          if (satisfies) res.push(p);
+          if (satisfies) {
+            res.push(p);
+          }
         }
         return res;
       };
