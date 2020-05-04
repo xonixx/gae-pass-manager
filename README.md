@@ -23,7 +23,7 @@ master-password-protected HTML page.
 1. You need to have installed Java 8, Maven 3.
 1. Create new GAE application. This gives you personal _https://your-app-id.appspot.com_ website.
 1. Checkout the code.
-1. Run `mvn appengine:update -Pprod -Dappid=your-app-id`
+1. Run `mvn clean appengine:update -Pprod -Dappid=your-app-id`
 1. Start using the app!
 
 ## Some Screenshots
