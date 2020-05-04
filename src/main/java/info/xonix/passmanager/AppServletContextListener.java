@@ -36,6 +36,24 @@ public class AppServletContextListener implements ServletContextListener {
         .addServlet("Api", new ApiServlet(gson, appLogic, jsonReplyLogic))
         .addMapping("/api/*");
 
+/*
+    servletContext
+        .addServlet(
+            "Test",
+            new HttpServlet() {
+              @Override
+              protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+                  throws ServletException, IOException {
+                resp.setContentType("text/html");
+                resp.getWriter().write("<h1>Test... test... test</h1>Just test");
+                resp.getWriter().flush();
+              }
+            })
+        .addMapping("/test123/*");
+
+    log.info("Servlets registered");
+*/
+
     JspLogic jspLogic = new JspLogic(gson, appLogic, userService);
     JspLogic.setInstance(jspLogic);
   }

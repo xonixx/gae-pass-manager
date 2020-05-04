@@ -182,7 +182,7 @@ angular
     "$resource",
     function ($resource) {
       return $resource(
-        "api?action=:action",
+        "api/?action=:action",
         {},
         {
           loadData: { method: "GET", params: { action: "load" } },
