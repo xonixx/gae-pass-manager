@@ -554,8 +554,10 @@ angular
         if (!showObsolete) {
           passwords = passwords.filter(
             (p) =>
-              (p.tags || []).filter((t) => t.toLowerCase() === "obsolete")
-                .length === 0
+              (p.tags || []).filter((t) => {
+                const tag = t.toLowerCase();
+                return tag === "obsolete" || tag === "delete";
+              }).length === 0
           );
         }
         if (!searchStr) {
